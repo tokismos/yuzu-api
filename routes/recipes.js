@@ -33,14 +33,14 @@ router.post("/add", async (req, res) => {
     steps: req.body.steps,
     ingredients: req.body.ingredients,
   });
-  // recipe.exists({ name: recipee.name }, function (err, doc) {
-  //   if (err) {
-  //     console.log(err);
-
-  //   } else {
-  //     console.log("Result :", doc); // false
-  //   }
-  // });
+  recipe.exists({ name: recipee.name }, function (err, doc) {
+    if (err) {
+      console.log(err);
+      return;
+    } else {
+      console.log("Result :", doc); // false
+    }
+  });
   try {
     const res = await newRecipe.save();
     console.log("reeeeees", res);

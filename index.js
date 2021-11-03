@@ -3,12 +3,12 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const recipesRouter = require("./routes/recipes");
-// const cors = require("cors")({
-//   origin: "*",
-// });
+const cors = require("cors")({
+  origin: "*",
+});
 const port = process.env.PORT || 3000;
 
-// app.use(cors);
+app.use(cors);
 app.use(express.json());
 app.use("/recipes", recipesRouter);
 mongoose.connect(process.env.MONGODB_URI, {

@@ -31,6 +31,9 @@ router.post("/add", async (req, res) => {
     name: req.body.name,
     difficulty: req.body.difficulty,
     steps: req.body.steps,
+    nbrPersonne: req.body.nbrPersonne,
+    tempsCuisson: req.body.tempsCuisson,
+    tempsPreparation: req.body.tempsPreparation,
     ingredients: req.body.ingredients,
   });
   // recipe.exists({ name: recipee.name }, function (err, doc) {

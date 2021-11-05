@@ -25,6 +25,18 @@ const recipeSchema = new mongoose.Schema({
     type: Array,
     required: true,
   },
+  nbrPersonne: {
+    type: String,
+    required: true,
+  },
+  tempsPreparation: {
+    type: String,
+    required: true,
+  },
+  tempsCuisson: {
+    type: String,
+    required: true,
+  },
   ingredients: [ingredientsSchema],
 });
 

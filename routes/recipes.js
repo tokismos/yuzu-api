@@ -13,19 +13,13 @@ router.get("/", async (req, res) => {
       filters.push({ [key]: req.query[key] });
     });
   }
-  const test = () => {
-    switch (req.query.key) {
-      case "difficulty":
-        return;
-    }
-  };
+
   const result = await recipe.find(
     //if there's filters we add them to the query sinon we get all !
-    // filters.length
-    true
+    filters.length
       ? {
-          //$and: [...filters],
-          regime: false && { $all: [] },
+          $and: [...filters],
+          // regime: false && { $all: [] },
         }
       : {}
   );

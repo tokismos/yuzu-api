@@ -4,20 +4,28 @@ const recipe = require("../models/recipe");
 
 router.get("/", async (req, res) => {
   let filters = [];
+  console.log("filters", filters);
   //get all the data from url and put it in array to spread it in $and
   if (req.query) {
-    console.log(req.query);
+    console.log("query", req.query);
     const keys = Object.keys(req.query);
     keys.forEach((key) => {
       filters.push({ [key]: req.query[key] });
     });
-    console.log(filters);
   }
+  const test = () => {
+    switch (req.query.key) {
+      case "difficulty":
+        return;
+    }
+  };
   const result = await recipe.find(
     //if there's filters we add them to the query sinon we get all !
-    filters.length
+    // filters.length
+    true
       ? {
-          $and: [...filters],
+          //$and: [...filters],
+          regime: false && { $all: [] },
         }
       : {}
   );
@@ -35,6 +43,16 @@ router.post("/add", async (req, res) => {
     tempsCuisson: req.body.tempsCuisson,
     tempsPreparation: req.body.tempsPreparation,
     ingredients: req.body.ingredients,
+    four: req.body.four,
+    microOnde: req.body.microOnde,
+    mixeur: req.body.mixeur,
+    robotCuiseur: req.body.robotCuiseur,
+    friteuse: req.body.friteuse,
+    isMeat: req.body.isMeat,
+    isFish: req.body.isFish,
+    isVegetarien: req.body.isVegetarien,
+    isVegan: req.body.isVegan,
+    isNoGluten: req.body.isNoGluten,
   });
   // recipe.exists({ name: recipee.name }, function (err, doc) {
   //   if (err) {

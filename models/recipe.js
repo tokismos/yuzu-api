@@ -15,6 +15,26 @@ const recipeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  four: {
+    type: Boolean,
+    required: true,
+  },
+  microOnde: {
+    type: Boolean,
+    required: true,
+  },
+  mixeur: {
+    type: Boolean,
+    required: true,
+  },
+  robotCuiseur: {
+    type: String,
+    required: true,
+  },
+  friteuse: {
+    type: String,
+    required: true,
+  },
 
   difficulty: {
     type: String,
@@ -26,17 +46,38 @@ const recipeSchema = new mongoose.Schema({
     required: true,
   },
   nbrPersonne: {
-    type: String,
+    type: Number,
     required: true,
   },
   tempsPreparation: {
-    type: String,
+    type: Number,
     required: true,
   },
   tempsCuisson: {
-    type: String,
+    type: Number,
     required: true,
   },
+  isMeat: {
+    type: Boolean,
+    required: true,
+  },
+  isFish: {
+    type: Boolean,
+    required: true,
+  },
+  isVegetarien: {
+    type: Boolean,
+    required: true,
+  },
+  isVegan: {
+    type: Boolean,
+    required: true,
+  },
+  isNoGluten: {
+    type: Boolean,
+    required: true,
+  },
+
   ingredients: [ingredientsSchema],
 });
 

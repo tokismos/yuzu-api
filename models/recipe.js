@@ -77,7 +77,6 @@ const recipeSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
-
   ingredients: [ingredientsSchema],
 });
 

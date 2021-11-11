@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "nodemon index.js"
   },
   "license": "MIT",
   "dependencies": {
@@ -13,8 +13,8 @@
     "mongoose": "^6.0.10"
   },
   "devDependencies": {
-    "nodemon": "^2.0.14",
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "nodemon": "^2.0.14"
   },
   "engines": {
     "node": ">= 6.9.4",

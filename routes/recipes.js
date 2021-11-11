@@ -9,9 +9,13 @@ router.get("/", async (req, res) => {
   if (req.query) {
     console.log("query", req.query);
     const keys = Object.keys(req.query);
+    console.log("keys", keys);
     keys.forEach((key) => {
       filters.push({ [key]: req.query[key] });
     });
+  }
+  if (req.query.difficulty) {
+    console.log("difficulty hhh");
   }
 
   const result = await recipe.find(
@@ -57,11 +61,12 @@ router.post("/add", async (req, res) => {
   //   }
   // });
   try {
-    const res = await newRecipe.save();
-    console.log("reeeeees", res);
-    res.status(200).json({ message: "DATA ADDED TO DB" });
+    const result = await newRecipe.save();
+    console.log("reeeeees", result);
+    res.status(200).send({ message: "DATA ADDED TO DB" });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.log("eroroororo");
+    res.status(400).send({ message: "Error, NOT ADDED TO DB" });
   }
 
   // res.send(req.body);

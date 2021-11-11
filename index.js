@@ -1,6 +1,7 @@
-//require("dotenv").config();
+require("dotenv").config();
 const express = require("express");
 const app = express();
+
 const mongoose = require("mongoose");
 const recipesRouter = require("./routes/recipes");
 const cors = require("cors")({
@@ -9,7 +10,9 @@ const cors = require("cors")({
 const port = process.env.PORT || 3000;
 
 app.use(cors);
-app.use(express.json());
+
+app.use(express.urlencoded({ limit: "50mb" }));
+app.use(express.json({ limit: "50mb" }));
 app.use("/recipes", recipesRouter);
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,

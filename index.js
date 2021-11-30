@@ -4,6 +4,7 @@ const app = express();
 
 const mongoose = require("mongoose");
 const recipesRouter = require("./routes/recipes");
+const verifyRouter = require("./routes/verify");
 const cors = require("cors")({
   origin: "*",
 });
@@ -14,6 +15,8 @@ app.use(cors);
 app.use(express.urlencoded({ limit: "50mb" }));
 app.use(express.json({ limit: "50mb" }));
 app.use("/recipes", recipesRouter);
+app.use("/verify", verifyRouter);
+
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
 });

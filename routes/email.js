@@ -16,7 +16,7 @@ router.post("/", async (req, res) => {
   var mailOptions = {
     from: process.env.EMAIL,
     to: "yuzuapp1@gmail.com",
-    subject: req.body.title,
+    subject: `${req.body.fullName}- ${req.body.title}`,
     text: req.body.message,
   };
 

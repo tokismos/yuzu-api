@@ -2,53 +2,43 @@ const express = require("express");
 const router = express.Router();
 
 const client = require("twilio")(
-  "AC24027584fc3fe1af1743bea7d97b501e",
-  "038cb60b3c71b14266b24ed404f1bcfa"
+  "ACaf9aac718b0a368f0616a712bf637908",
+  "e16efc05fe3e70057852a801bb924df4"
 );
 
-router.get("/num", async (req, res) => {
+router.get("/send", async (req, res) => {
   try {
-    //await client.verify;
-    // .services("VA9f3276ce2a6747880cb21beeb4c845d5")
-    // .verifications.create({
-    //   to: `+212675234067`,
-    //   // to: `+${req.query.phoneNumber}`,
-    //   channel: "sms",
-    // });
-    console.log("9ra hnaaa");
+    await client.verify
+      .services("VAb8c7158264697e5c7a5b707f5b743da5")
+      .verifications.create({
+        to: `+${req.query.phoneNumber}`,
+        channel: "sms",
+      });
+    console.log("Verification code sent to number !");
     return res.send("SMS Sent");
   } catch (e) {
     console.log("Erreur", e);
-    res.status(400).send("SMS not sent !");
+    res.status(400).json("SMS not sent !");
   }
 });
 
 router.get("/verify", async (req, res) => {
+  console.log("start");
   try {
-    // const result = await client.verify
-    //   .services("VA9f3276ce2a6747880cb21beeb4c845d5")
-    //   .verificationChecks.create({
-    //     to: `+${req.query.phoneNumber}`,
-    //     code: `+${req.query.verificationCode}`,
-    //   });
-
-    return res.send("code valid");
-
-    // console.log("finished result", result);
-    // if (result.status == "approved") {
-    //   return res.send(result.status);
-    // } else {
-    //   res.status(400).send("CODE NOT APPROVED");
-    // }
+    const result = await client.verify
+      .services("VA1491bf0d469caa11eb0701f6d5f8e0e1")
+      .verificationChecks.create({
+        to: `+${req.query.phoneNumber}`,
+        code: `+${req.query.verificationCode}`,
+      });
+    console.log("resssultat");
+    if (result.status == "approved") {
+      return res.json("CODE APPROVED");
+    }
+    res.status(400).json({ error: "Code Not Valid !" });
   } catch (e) {
-    console.log("ERROR", e);
-    res.status(400).send("CODE NOT APPROVED");
+    return res.status(e.status).json({ error: "There is an error" });
   }
-  // if (resultat == "approved") {
-  //   return res.send("CODE APPROVED");
-  // }
-  // console.log("resssultat", resultat.status);
-  // return res.send({ status: resultat.status });
 });
 
 module.exports = router;

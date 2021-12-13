@@ -1,4 +1,5 @@
 const express = require("express");
+
 const router = express.Router();
 const recipe = require("../models/recipe");
 
@@ -41,16 +42,8 @@ router.post("/add", async (req, res) => {
     tempsCuisson: req.body.tempsCuisson,
     tempsPreparation: req.body.tempsPreparation,
     ingredients: req.body.ingredients,
-    four: req.body.four,
-    microOnde: req.body.microOnde,
-    mixeur: req.body.mixeur,
-    robotCuiseur: req.body.robotCuiseur,
-    friteuse: req.body.friteuse,
-    isMeat: req.body.isMeat,
-    isFish: req.body.isFish,
-    isVegetarien: req.body.isVegetarien,
-    isVegan: req.body.isVegan,
-    isNoGluten: req.body.isNoGluten,
+    category: req.body.category,
+    material: req.body.material,
   });
   // recipe.exists({ name: recipee.name }, function (err, doc) {
   //   if (err) {

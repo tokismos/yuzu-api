@@ -58,7 +58,7 @@ router.post("/add", async (req, res) => {
     console.log("reeeeees", result);
     res.status(200).send({ message: "DATA ADDED TO DB" });
   } catch (err) {
-    console.log("eroroororo");
+    console.log("eroroororo", err);
     res.status(400).send({ message: "Error, NOT ADDED TO DB" });
   }
 

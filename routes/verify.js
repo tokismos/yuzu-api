@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const client = require("twilio")(
-  "ACaf9aac718b0a368f0616a712bf637908",
-  "e16efc05fe3e70057852a801bb924df4"
+  "AC0938f5cd6bccbcf12a3fb26d7cca3d4f",
+  "d7d1898d0dfa683880bcd1481af09680"
 );
 
 router.get("/send", async (req, res) => {
@@ -26,12 +26,12 @@ router.get("/verify", async (req, res) => {
   console.log("start");
   try {
     const result = await client.verify
-      .services("VA1491bf0d469caa11eb0701f6d5f8e0e1")
+      .services("VAb8c7158264697e5c7a5b707f5b743da5")
       .verificationChecks.create({
         to: `+${req.query.phoneNumber}`,
-        code: `+${req.query.verificationCode}`,
+        code: `${req.query.verificationCode}`,
       });
-    console.log("resssultat");
+    console.log("resssultat", req.query.verificationCode);
     if (result.status == "approved") {
       return res.json("CODE APPROVED");
     }

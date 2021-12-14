@@ -33,6 +33,10 @@ const recipeSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  tempsAttente: {
+    type: Number,
+    required: true,
+  },
   tempsPreparation: {
     type: Number,
     required: true,

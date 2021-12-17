@@ -31,7 +31,39 @@ router.get("/", async (req, res) => {
   res.send(result);
   return result;
 });
-
+//Modifier la recette
+router.patch("/modify", async (req, res) => {
+  try {
+    await recipe
+      .findByIdAndUpdate(req.body._id, req.body, function (err, docs) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("Updated User : ", docs);
+          res.status(200).send({ message: "DATA Modified successfuly" });
+        }
+      })
+      .clone();
+  } catch (e) {
+    console.log("eerrr", e);
+  }
+});
+//Supprimer la recette
+router.delete("/:id", async (req, res) => {
+  console.log("this is item id", req.params.id);
+  try {
+    await recipe.findByIdAndDelete(req.params.id, function (err, docs) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Deleted user ", docs);
+        res.status(200).send({ message: "User deleted successfuly" });
+      }
+    });
+  } catch (e) {
+    console.log("Error not deleted", e);
+  }
+});
 router.post("/add", async (req, res) => {
   const newRecipe = new recipe({
     imgURL: req.body.imgURL,

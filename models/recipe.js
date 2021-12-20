@@ -30,7 +30,7 @@ const recipeSchema = new mongoose.Schema({
     required: true,
   },
   nbrPersonne: {
-    type: Number,
+    type: String,
     required: true,
   },
   tempsAttente: {

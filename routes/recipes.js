@@ -45,7 +45,7 @@ router.patch("/modify", async (req, res) => {
       })
       .clone();
   } catch (e) {
-    console.log("eerrr", e);
+    res.status(400).send({ message: "Error, NOT MODIFIED", error: e });
   }
 });
 //Supprimer la recette

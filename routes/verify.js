@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const client = require("twilio")(
-  "AC0938f5cd6bccbcf12a3fb26d7cca3d4f",
-  "1aa46c0271fc6bf8c5da7124e2c47108"
+  process.env.TWILIO_SID,
+  process.env.TWILIO_PASSWORD
 );
 
 router.get("/send", async (req, res) => {

@@ -31,6 +31,13 @@ router.get("/", async (req, res) => {
   res.send(result);
   return result;
 });
+
+router.get("/:id", async (req, res) => {
+  const result = await recipe.find({ _id: req.params.id });
+
+  res.send(result);
+  return result;
+});
 //Modifier la recette
 router.patch("/modify", async (req, res) => {
   try {

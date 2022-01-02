@@ -35,7 +35,7 @@ const recipeSchema = new mongoose.Schema({
   },
   tempsAttente: {
     type: Number,
-    required: false,
+    required: true,
   },
   tempsPreparation: {
     type: Number,
@@ -43,7 +43,7 @@ const recipeSchema = new mongoose.Schema({
   },
   tempsCuisson: {
     type: Number,
-    required: false,
+    required: true,
   },
   material: {
     type: Array,

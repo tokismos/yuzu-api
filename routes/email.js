@@ -7,9 +7,7 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   var transporter = nodemailer.createTransport({
     service: "gmail",
-    port: 465,
-    secure: true,
-    secureConnection: false,
+
     auth: {
       user: process.env.EMAIL,
       pass: process.env.EMAIL_PASSWORD,

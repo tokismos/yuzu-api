@@ -9,7 +9,7 @@ const client = require("twilio")(
 router.get("/send", async (req, res) => {
   try {
     await client.verify
-      .services("VAb8c7158264697e5c7a5b707f5b743da5")
+      .services("VA1491bf0d469caa11eb0701f6d5f8e0e1")
       .verifications.create({
         to: `+${req.query.phoneNumber}`,
         channel: "sms",
@@ -26,7 +26,7 @@ router.get("/verify", async (req, res) => {
   console.log("start");
   try {
     const result = await client.verify
-      .services("VAb8c7158264697e5c7a5b707f5b743da5")
+      .services("VA1491bf0d469caa11eb0701f6d5f8e0e1")
       .verificationChecks.create({
         to: `+${req.query.phoneNumber}`,
         code: `${req.query.verificationCode}`,

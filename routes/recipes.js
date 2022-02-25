@@ -61,6 +61,7 @@ router.patch("/incrementRight", async (req, res) => {
       $inc: { "stats.nbrRight": 1 },
     });
     console.log("incremented by one");
+    res.status(200).send({ message: "Incremented by one Successfuly R" });
   } catch (e) {
     console.log("Erreur , Increment didnt work !", e);
   }
@@ -71,6 +72,7 @@ router.patch("/incrementLeft", async (req, res) => {
       $inc: { "stats.nbrLeft": 1 },
     });
     console.log("incremented by one");
+    res.status(200).send({ message: "Incremented by one Successfuly L " });
   } catch (e) {
     console.log("Erreur , Increment didnt work !", e);
   }

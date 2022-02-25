@@ -7,6 +7,13 @@ const ingredientsSchema = new mongoose.Schema(
   },
   { _id: false }
 );
+const statsSchema = new mongoose.Schema(
+  {
+    nbrRight: { type: Number, required: false },
+    nbrLeft: { type: Number, required: false },
+  },
+  { _id: false }
+);
 const recipeSchema = new mongoose.Schema({
   imgURL: {
     type: String,
@@ -50,6 +57,7 @@ const recipeSchema = new mongoose.Schema({
     required: true,
   },
   ingredients: [ingredientsSchema],
+  stats: statsSchema,
 });
 
 const model = mongoose.model("recipe", recipeSchema);

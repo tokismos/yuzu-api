@@ -55,6 +55,26 @@ router.patch("/modify", async (req, res) => {
     res.status(400).send({ message: "Error, NOT MODIFIED", error: e });
   }
 });
+router.patch("/incrementRight", async (req, res) => {
+  try {
+    await recipe.findByIdAndUpdate(req.body._id, {
+      $inc: { "stats.nbrRight": 1 },
+    });
+    console.log("incremented by one");
+  } catch (e) {
+    console.log("Erreur , Increment didnt work !", e);
+  }
+});
+router.patch("/incrementLeft", async (req, res) => {
+  try {
+    await recipe.findByIdAndUpdate(req.body._id, {
+      $inc: { "stats.nbrLeft": 1 },
+    });
+    console.log("incremented by one");
+  } catch (e) {
+    console.log("Erreur , Increment didnt work !", e);
+  }
+});
 //Supprimer la recette
 router.delete("/:id", async (req, res) => {
   console.log("this is item id", req.params.id);

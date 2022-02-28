@@ -19,6 +19,10 @@ const recipeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  chefName: {
+    type: String,
+    required: false,
+  },
   name: {
     type: String,
     required: true,

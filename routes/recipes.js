@@ -97,6 +97,7 @@ router.post("/add", async (req, res) => {
   const newRecipe = new recipe({
     imgURL: req.body.imgURL,
     tempsAttente: req.body.tempsAttente,
+    chefName: req.body.chefName,
     name: req.body.name,
     difficulty: req.body.difficulty,
     steps: req.body.steps,

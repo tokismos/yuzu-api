@@ -5,7 +5,6 @@ const recipe = require("../models/recipe");
 
 router.get("/", async (req, res) => {
   let filters = [];
-  console.log("Req Queeeery", req.query);
   //get all the data from url and put it in array to spread it in $and
   if (req.query) {
     const keys = Object.keys(req.query);
@@ -24,22 +23,34 @@ router.get("/", async (req, res) => {
     //if there's filters we add them to the query sinon we get all !
     {
       $and: [
+        //to get just the recipes that are working
+        { imgURL: { $ne: null } },
+
+        // if difficulty exist in query , here even if we have multiple value like difficulty = difficile and
+        // difficulty= facile  it will look for each one of them
+
         req.query.difficulty ? { difficulty: req.query.difficulty } : {},
+
+        //we have isArray because when its just one value its  not working so it should be an array to do in
         req.query.category
           ? Array.isArray(req.query.category)
             ? { category: { $in: [...req.query.category] } }
             : { category: req.query.category }
           : {},
+
+        // it will be less than or equal the value
         req.query.tempsCuisson
           ? { tempsCuisson: { $lte: req.query.tempsCuisson } }
           : {},
+
+        //we have isArray because when its just one value its  not working so it should be an array to do in
+
         req.query.material
           ? Array.isArray(req.query.material)
             ? { material: { $in: [...req.query.material] } }
             : { material: req.query.material }
           : {},
       ],
-      // regime: false && { $all: [] },
     }
   );
   res.send(result);

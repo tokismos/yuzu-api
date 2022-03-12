@@ -5,33 +5,56 @@ const recipe = require("../models/recipe");
 
 router.get("/", async (req, res) => {
   let filters = [];
-  console.log("filters", filters);
+  console.log("Req Queeeery", req.query);
   //get all the data from url and put it in array to spread it in $and
   if (req.query) {
-    console.log("query", req.query);
     const keys = Object.keys(req.query);
     console.log("keys", keys);
     keys.forEach((key) => {
       filters.push({ [key]: req.query[key] });
     });
+    console.log("THIS IS FILTERS", filters);
   }
-  if (req.query.difficulty) {
-    console.log("difficulty hhh");
+  if (req.query.category) {
+    console.log("difficulty hhh", req.query.difficulty);
   }
 
+  console.log("..Filters", ...filters);
   const result = await recipe.find(
     //if there's filters we add them to the query sinon we get all !
-    filters.length
-      ? {
-          $and: [...filters],
-          // regime: false && { $all: [] },
-        }
-      : {}
+    {
+      $and: [
+        req.query.difficulty ? { difficulty: req.query.difficulty } : {},
+        req.query.category
+          ? Array.isArray(req.query.category)
+            ? { category: { $in: [...req.query.category] } }
+            : { category: req.query.category }
+          : {},
+        req.query.tempsCuisson
+          ? { tempsCuisson: { $lte: req.query.tempsCuisson } }
+          : {},
+        req.query.material
+          ? Array.isArray(req.query.material)
+            ? { material: { $in: [...req.query.material] } }
+            : { material: req.query.material }
+          : {},
+      ],
+      // regime: false && { $all: [] },
+    }
   );
   res.send(result);
+  let names = [];
+  result.map((i) => names.push(i.name));
+  console.log("LENGTH", result.length, names);
   return result;
 });
 
+router.get("/filters", async (req, res) => {
+  const result = await recipe.find({ _id: req.params.id });
+
+  res.send(result);
+  return result;
+});
 router.get("/:id", async (req, res) => {
   const result = await recipe.find({ _id: req.params.id });
 

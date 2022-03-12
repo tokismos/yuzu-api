@@ -34,7 +34,11 @@ router.get("/", async (req, res) => {
         //we have isArray because when its just one value its  not working so it should be an array to do in
         req.query.category
           ? Array.isArray(req.query.category)
-            ? { category: { $in: [...req.query.category] } }
+            ? {
+                category: {
+                  $in: [...req.query.category],
+                },
+              }
             : { category: req.query.category }
           : {},
 

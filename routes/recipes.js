@@ -3,6 +3,12 @@ const express = require("express");
 const router = express.Router();
 const recipe = require("../models/recipe");
 
+router.get("/all", async (req, res) => {
+  const result = await recipe.find({});
+  res.send(result);
+
+  return result;
+});
 router.get("/", async (req, res) => {
   let filters = [];
   //get all the data from url and put it in array to spread it in $and
@@ -14,9 +20,6 @@ router.get("/", async (req, res) => {
     });
     console.log("THIS IS FILTERS", filters);
   }
-  if (req.query.category) {
-    console.log("difficulty hhh", req.query.difficulty);
-  }
 
   console.log("..Filters", ...filters);
   const result = await recipe.find(
@@ -24,7 +27,7 @@ router.get("/", async (req, res) => {
     {
       $and: [
         //to get just the recipes that are working
-        { imgURL: { $ne: null } },
+        { isVisible: true },
 
         // if difficulty exist in query , here even if we have multiple value like difficulty = difficile and
         // difficulty= facile  it will look for each one of them
@@ -58,9 +61,10 @@ router.get("/", async (req, res) => {
     }
   );
   res.send(result);
+  console.log("Number", result.length);
   let names = [];
   result.map((i) => names.push(i.name));
-  console.log("LENGTH", result.length, names);
+  console.log("LENGTH", result.length);
   return result;
 });
 
@@ -77,6 +81,27 @@ router.get("/:id", async (req, res) => {
   return result;
 });
 //Modifier la recette
+router.patch("/toggleVisible/:id/:value", async (req, res) => {
+  try {
+    console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
+    await recipe
+      .findByIdAndUpdate(
+        req.params.id,
+        { isVisible: req.params.value },
+        function (err, docs) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log("Updated Visible: ", docs);
+            res.status(200).send({ message: "Visible Modified successfuly" });
+          }
+        }
+      )
+      .clone();
+  } catch (e) {
+    res.status(400).send({ message: "Error, NOT MODIFIED", error: e });
+  }
+});
 router.patch("/modify", async (req, res) => {
   try {
     await recipe
@@ -145,6 +170,7 @@ router.post("/add", async (req, res) => {
     ingredients: req.body.ingredients,
     category: req.body.category,
     material: req.body.material,
+    isVisible: true,
   });
   // recipe.exists({ name: recipee.name }, function (err, doc) {
   //   if (err) {

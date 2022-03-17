@@ -62,6 +62,7 @@ const recipeSchema = new mongoose.Schema({
   },
   ingredients: [ingredientsSchema],
   stats: statsSchema,
+  isVisible: { type: Boolean },
 });
 
 const model = mongoose.model("recipe", recipeSchema);

@@ -74,6 +74,28 @@ router.get("/filters", async (req, res) => {
   res.send(result);
   return result;
 });
+router.patch("/tmp", async (req, res) => {
+  try {
+    await recipe.updateMany(
+      {},
+      [
+        {
+          $set: {
+            tempsTotale: {
+              $sum: [`$tempsPreparation`, "$tempsCuisson", "$tempsAttente"],
+            },
+          },
+        },
+      ],
+      { upsert: true }
+    );
+    console.log("dazha");
+  } catch (e) {
+    console.log("Qrreye", e);
+  }
+  res.send("DONE");
+  return "DONE";
+});
 router.get("/:id", async (req, res) => {
   const result = await recipe.find({ _id: req.params.id });
 
@@ -83,7 +105,6 @@ router.get("/:id", async (req, res) => {
 //Modifier la recette
 router.patch("/toggleVisible/:id/:value", async (req, res) => {
   try {
-    console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
     await recipe
       .findByIdAndUpdate(
         req.params.id,

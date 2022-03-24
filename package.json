@@ -13,6 +13,7 @@
     "firebase": "^9.6.5",
     "mongoose": "^6.1.9",
     "nodemailer": "^6.7.2",
+    "stripe": "^8.210.0",
     "twilio": "^3.73.1"
   },
   "devDependencies": {

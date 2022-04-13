@@ -180,6 +180,7 @@ router.delete("/:id", async (req, res) => {
 router.post("/add", async (req, res) => {
   const newRecipe = new recipe({
     imgURL: req.body.imgURL,
+    videoURL: req.body.videoURL,
     tempsAttente: req.body.tempsAttente,
     chefName: req.body.chefName,
     name: req.body.name,

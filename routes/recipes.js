@@ -46,8 +46,8 @@ router.get("/", async (req, res) => {
           : {},
 
         // it will be less than or equal the value
-        req.query.tempsCuisson
-          ? { tempsCuisson: { $lte: req.query.tempsCuisson } }
+        req.query.tempsTotal
+          ? { tempsTotal: { $lte: req.query.tempsTotal } }
           : {},
 
         //we have isArray because when its just one value its  not working so it should be an array to do in
@@ -193,6 +193,7 @@ router.post("/add", async (req, res) => {
     category: req.body.category,
     material: req.body.material,
     isVisible: true,
+    tempsTotal: req.body.tempsTotal,
   });
   // recipe.exists({ name: recipee.name }, function (err, doc) {
   //   if (err) {

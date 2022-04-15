@@ -60,6 +60,10 @@ const recipeSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  tempsTotal: {
+    type: Number,
+    required: true,
+  },
   material: {
     type: Array,
     required: true,

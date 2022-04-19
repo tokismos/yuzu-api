@@ -27,7 +27,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 });
 
 mongoose.connection.once("connected", () => {
-  console.log("connected to DB !!!");
+  console.log("connected to DB ! !!");
 });
 mongoose.connection.on("error", (err) => {
   console.error("error connecting", err);

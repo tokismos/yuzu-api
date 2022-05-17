@@ -45,6 +45,16 @@ router.get("/", async (req, res) => {
             : { category: req.query.category }
           : {},
 
+          req.query.regime
+            ? Array.isArray(req.query.regime)
+              ? {
+                  regime: {
+                    $in: [...req.query.regime],
+                  },
+                }
+              : { regime: req.query.regime }
+            : {},
+
         // it will be less than or equal the value
         req.query.tempsTotal
           ? { tempsTotal: { $lte: req.query.tempsTotal } }
@@ -191,18 +201,11 @@ router.post("/add", async (req, res) => {
     tempsPreparation: req.body.tempsPreparation,
     ingredients: req.body.ingredients,
     category: req.body.category,
+    regime: req.body.regime,
     material: req.body.material,
     isVisible: true,
     tempsTotal: req.body.tempsTotal,
   });
-  // recipe.exists({ name: recipee.name }, function (err, doc) {
-  //   if (err) {
-  //     console.log(err);
-
-  //   } else {
-  //     console.log("Result :", doc); // false
-  //   }
-  // });
   try {
     const result = await newRecipe.save();
     console.log("reeeeees", result);
@@ -211,10 +214,6 @@ router.post("/add", async (req, res) => {
     console.log("eroroororo", err);
     res.status(400).send({ message: "Error, NOT ADDED TO DB", error: err });
   }
-
-  // res.send(req.body);
-  // console.log(req.body);
-  // console.log("hooooooooooo");
 });
 
 module.exports = router;

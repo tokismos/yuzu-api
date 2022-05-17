@@ -7,7 +7,6 @@ const recipesRouter = require("./routes/recipes");
 const verifyRouter = require("./routes/verify");
 const emailRouter = require("./routes/email");
 const payRouter = require("./routes/pay");
-const loginRouter = require("./routes/login");
 
 const cors = require("cors")({
   origin: "*",
@@ -22,7 +21,6 @@ app.use("/recipes", recipesRouter);
 app.use("/phoneNumber", verifyRouter);
 app.use("/email", emailRouter);
 app.use("/pay", payRouter);
-app.use("/login", loginRouter);
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,

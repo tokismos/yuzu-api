@@ -96,6 +96,22 @@ router.patch("/tmp", async (req, res) => {
   res.send("DONE");
   return "DONE";
 });
+
+router.get('/byName/:name', async (req, res) => {
+  const { name } = req.params;
+
+  if (!name) res.status(400).send({ msg: "Bad format" });
+
+  try {
+    const result = await recipe.find({ name });
+
+    if (!Array.isArray(result) || result === 0) throw Error('not found');
+    res.send(result[0]);
+  } catch (e) {
+    res.send(e);
+  }
+})
+
 router.get("/:id", async (req, res) => {
   const result = await recipe.find({ _id: req.params.id });
 

@@ -17,6 +17,7 @@ app.use(cors);
 
 app.use(express.urlencoded({ limit: "50mb" }));
 app.use(express.json({ limit: "50mb" }));
+app.use("/", app.router.get("/", async (req, res) => {res.send('salut')}))
 app.use("/recipes", recipesRouter);
 app.use("/phoneNumber", verifyRouter);
 app.use("/email", emailRouter);

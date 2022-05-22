@@ -223,46 +223,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-const THUMB_SIZE = 512;
-const generateThumbnail = async (imgURL, name, thumbFileName) => {
-   return https.request(imageURL, response => {
-    const data = new Stream();
-
-    response.on('data', chunk => {
-      data.push(chunk);
-    });
-    response.on('end', () => {
-      fs.writeFileSync(imageName, data.read());
-
-      console.log(`Starting ${imageName}`)
-      const thumbFileTmp = path.join(os.tmpdir(), thumbFileName);
-
-      sharp(imageName)
-          .resize(size, null)
-          .toFile(thumbFileTmp, (err, info) => {
-            console.log({ generated: thumbFileName })
-
-            const storage = getStorage().bucket('yuzu-5720e.appspot.com');
-
-            storage.upload(thumbFileTmp, {
-              destination: `recettes/${thumbFileName}`,
-              gzip: true
-            }).then(() => console.log(`uploaded ${thumbFileName}`)).catch(console.error)
-          })
-    })
-  })
-}
-
   router.post("/add", async (req, res) => {
-    const thumbFileName = `${req.body.imgURL}_${THUMB_SIZE}_thumb.png`;
-    await generateThumbnail(req.body.imgURL, req.body.name, thumbFileName);
-
-    const storage = getStorage().bucket('yuzu-5720e.appspot.com');
-    const thumbURL = await storage.file(thumbFileName)
-        .getSignedUrl({
-          action: 'read',
-          expires: '03-09-2491'
-        });
 
     const newRecipe = new recipe({
     imgURL: req.body.imgURL,

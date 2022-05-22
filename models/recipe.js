@@ -21,7 +21,7 @@ const recipeSchema = new mongoose.Schema({
   },
   thumbURL: {
     type: String,
-    required true,
+    required: true,
   },
   videoURL: {
     type: String,

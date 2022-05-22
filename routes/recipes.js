@@ -250,7 +250,7 @@ const generateThumbnail = async (imgURL, name, thumbFileName) => {
             }).then(() => console.log(`uploaded ${thumbFileName}`)).catch(console.error)
           })
     })
-  };
+  })
 }
 
   router.post("/add", async (req, res) => {

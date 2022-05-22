@@ -1,7 +1,26 @@
+require('dotenv').config();
 const express = require("express");
+
+const https = require('https');
+const fs = require('fs');
+const Stream = require('stream').Transform;
+const path = require('path');
+const os = require('os');
+const sharp = require('sharp');
+const { getStorage, getBucket, ref, listAll, uploadBytes, getDownloadURL } = require('firebase-admin/storage');
+const admin = require("firebase-admin");
 
 const router = express.Router();
 const recipe = require("../models/recipe");
+
+const serviceAccount = require('../yuzu-5720e-firebase-adminsdk-65ckj-bdc318a85a.json');
+const firebaseConfig = {
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: process.env.FIREBASE_DATABASE_URL
+};
+
+const fireApp = admin.initializeApp(firebaseConfig);
+console.log({fireApp})
 
 router.get("/all", async (req, res) => {
   const result = await recipe.find({});
@@ -203,9 +222,51 @@ router.delete("/:id", async (req, res) => {
     console.log("Error not deleted", e);
   }
 });
-router.post("/add", async (req, res) => {
-  const newRecipe = new recipe({
+
+const THUMB_SIZE = 512;
+const generateThumbnail = async (imgURL, name, thumbFileName) => {
+   return https.request(imageURL, response => {
+    const data = new Stream();
+
+    response.on('data', chunk => {
+      data.push(chunk);
+    });
+    response.on('end', () => {
+      fs.writeFileSync(imageName, data.read());
+
+      console.log(`Starting ${imageName}`)
+      const thumbFileTmp = path.join(os.tmpdir(), thumbFileName);
+
+      sharp(imageName)
+          .resize(size, null)
+          .toFile(thumbFileTmp, (err, info) => {
+            console.log({ generated: thumbFileName })
+
+            const storage = getStorage().bucket('yuzu-5720e.appspot.com');
+
+            storage.upload(thumbFileTmp, {
+              destination: `recettes/${thumbFileName}`,
+              gzip: true
+            }).then(() => console.log(`uploaded ${thumbFileName}`)).catch(console.error)
+          })
+    })
+  };
+}
+
+  router.post("/add", async (req, res) => {
+    const thumbFileName = `${req.body.imgURL}_${THUMB_SIZE}_thumb.png`;
+    await generateThumbnail(req.body.imgURL, req.body.name, thumbFileName);
+
+    const storage = getStorage().bucket('yuzu-5720e.appspot.com');
+    const thumbURL = await storage.file(thumbFileName)
+        .getSignedUrl({
+          action: 'read',
+          expires: '03-09-2491'
+        });
+
+    const newRecipe = new recipe({
     imgURL: req.body.imgURL,
+      thumbURL: req.body.thumbURL,
     videoURL: req.body.videoURL,
     tempsAttente: req.body.tempsAttente,
     chefName: req.body.chefName,

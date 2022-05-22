@@ -19,6 +19,10 @@ const recipeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  thumbURL: {
+    type: String,
+    required true,
+  },
   videoURL: {
     type: String,
     required: false,

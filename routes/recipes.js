@@ -200,7 +200,6 @@ router.patch("/incrementLeft", async (req, res) => {
     await recipe.findByIdAndUpdate(req.body._id, {
       $inc: { "stats.nbrLeft": 1 },
     });
-    console.log("incremented by one");
     res.status(200).send({ message: "Incremented by one Successfuly L " });
   } catch (e) {
     console.log("Erreur , Increment didnt work !", e);
@@ -222,6 +221,18 @@ router.delete("/:id", async (req, res) => {
     console.log("Error not deleted", e);
   }
 });
+
+router.post('/thumb', async (req, res) => {
+  if (!req.body.thumbURL || !req.body.item._id) res.status(400);
+  try {
+    await recipe.findByIdAndUpdate(req.body.item._id, { thumbURL: req.body.thumbURL},  (err, data) => {
+      if (err) res.status(500).send({ err })
+      res.status(200).send({ data })
+    })
+  } catch (e) {
+    console.error(e);
+  }
+})
 
   router.post("/add", async (req, res) => {
 
@@ -246,10 +257,8 @@ router.delete("/:id", async (req, res) => {
   });
   try {
     const result = await newRecipe.save();
-    console.log("reeeeees", result);
     res.status(200).send({ message: "DATA ADDED TO DB" });
   } catch (err) {
-    console.log("eroroororo", err);
     res.status(400).send({ message: "Error, NOT ADDED TO DB", error: err });
   }
 });

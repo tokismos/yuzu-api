@@ -225,10 +225,10 @@ router.delete("/:id", async (req, res) => {
 router.post('/thumb', async (req, res) => {
   if (!req.body.thumbURL || !req.body.item._id) res.status(400);
   try {
-    await recipe.findByIdAndUpdate(req.body.item._id, { thumbURL: req.body.thumbURL},  (err, data) => {
+    await recipe.findByIdAndUpdate(req.body.item._id, { thumbURL: req.body.thumbURL },  (err, data) => {
       if (err) res.status(500).send({ err })
-      res.status(200).send({ data })
-    })
+      res.status(200).send({ data });
+    }).clone();
   } catch (e) {
     console.error(e);
   }

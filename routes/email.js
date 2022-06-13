@@ -5,7 +5,7 @@ const router = express.Router();
 //Send an email
 
 router.post("/", async (req, res) => {
-  var transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
     service: "gmail",
 
     auth: {
@@ -14,7 +14,7 @@ router.post("/", async (req, res) => {
     },
   });
 
-  var mailOptions = {
+  const mailOptions = {
     from: process.env.EMAIL,
     to: "yuzuapp1@gmail.com",
     subject: `${req.body.fullName}- ${req.body.title}`,
@@ -23,7 +23,7 @@ router.post("/", async (req, res) => {
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      console.log("EEEE", error);
+      console.log({ error })
       throw new Error("ERROR EMAIL NOT SENT");
     } else {
       res.send("EMAIL SENT");

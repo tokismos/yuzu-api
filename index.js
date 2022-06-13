@@ -35,4 +35,4 @@ mongoose.connection.on("error", (err) => {
   console.error("error connecting", err);
 });
 
-app.listen(port, () => console.log("connencted"));
+app.listen(port, () => console.log(`connected on port ${port}`));

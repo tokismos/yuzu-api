@@ -20,7 +20,6 @@ const firebaseConfig = {
 };
 
 const fireApp = admin.initializeApp(firebaseConfig);
-console.log({fireApp})
 
 router.get("/all", async (req, res) => {
   const result = await recipe.find({});
@@ -57,22 +56,22 @@ router.get("/", async (req, res) => {
         req.query.category
           ? Array.isArray(req.query.category)
             ? {
-                category: {
-                  $in: [...req.query.category],
-                },
-              }
+              category: {
+                $in: [...req.query.category],
+              },
+            }
             : { category: req.query.category }
           : {},
 
-          req.query.regime
-            ? Array.isArray(req.query.regime)
-              ? {
-                  regime: {
-                    $in: [...req.query.regime],
-                  },
-                }
-              : { regime: req.query.regime }
-            : {},
+        req.query.regime
+          ? Array.isArray(req.query.regime)
+            ? {
+              regime: {
+                $in: [...req.query.regime],
+              },
+            }
+            : { regime: req.query.regime }
+          : {},
 
         // it will be less than or equal the value
         req.query.tempsTotal
@@ -154,7 +153,7 @@ router.patch("/toggleVisible/:id/:value", async (req, res) => {
       .findByIdAndUpdate(
         req.params.id,
         { isVisible: req.params.value },
-        function (err, docs) {
+        function(err, docs) {
           if (err) {
             console.log(err);
           } else {
@@ -171,7 +170,7 @@ router.patch("/toggleVisible/:id/:value", async (req, res) => {
 router.patch("/modify", async (req, res) => {
   try {
     await recipe
-      .findByIdAndUpdate(req.body._id, req.body, function (err, docs) {
+      .findByIdAndUpdate(req.body._id, req.body, function(err, docs) {
         if (err) {
           console.log(err);
         } else {
@@ -209,7 +208,7 @@ router.patch("/incrementLeft", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   console.log("this is item id", req.params.id);
   try {
-    await recipe.findByIdAndDelete(req.params.id, function (err, docs) {
+    await recipe.findByIdAndDelete(req.params.id, function(err, docs) {
       if (err) {
         console.log(err);
       } else {
@@ -225,7 +224,7 @@ router.delete("/:id", async (req, res) => {
 router.post('/thumb', async (req, res) => {
   if (!req.body.thumbURL || !req.body.item._id) res.status(400);
   try {
-    await recipe.findByIdAndUpdate(req.body.item._id, { thumbURL: req.body.thumbURL },  (err, data) => {
+    await recipe.findByIdAndUpdate(req.body.item._id, { thumbURL: req.body.thumbURL }, (err, data) => {
       if (err) res.status(500).send({ err })
       res.status(200).send({ data });
     }).clone();
@@ -234,11 +233,11 @@ router.post('/thumb', async (req, res) => {
   }
 })
 
-  router.post("/add", async (req, res) => {
+router.post("/add", async (req, res) => {
 
-    const newRecipe = new recipe({
+  const newRecipe = new recipe({
     imgURL: req.body.imgURL,
-      thumbURL: req.body.thumbURL,
+    thumbURL: req.body.thumbURL,
     videoURL: req.body.videoURL,
     tempsAttente: req.body.tempsAttente,
     chefName: req.body.chefName,

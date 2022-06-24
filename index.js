@@ -5,7 +5,7 @@ const app = express();
 const mongoose = require("mongoose");
 const recipesRouter = require("./routes/recipes");
 const verifyRouter = require("./routes/verify");
-const emailRouter = require("./routes/email");
+const { default: emailRouter } = require("./routes/email");
 const payRouter = require("./routes/pay");
 const defaultRouter = require('./routes/default');
 

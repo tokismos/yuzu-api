@@ -1,10 +1,7 @@
-const util = require('util');
 const express = require("express");
 const nodemailer = require("nodemailer");
 const router = express.Router();
 const { google } = require('googleapis');
-
-const debug = o => console.log(util.inspect(o, false, null, true));
 
 const sendMail = async (req, res) => {
   const OAuth2 = google.auth.OAuth2;
@@ -12,7 +9,6 @@ const sendMail = async (req, res) => {
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
   const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
 
-  debug({ clientId, clientSecret, refreshToken })
   const myOAuth2Client = new OAuth2(
     clientId,
     clientSecret
@@ -35,12 +31,11 @@ const sendMail = async (req, res) => {
 
   const mailOptions = {
     from: process.env.EMAIL,
-    to: "edouard.jubert@gmail.com",
+    to: process.env.MANAGE_EMAIL,
     subject: `${req.body.fullName || ''}- ${req.body.title || ''}`,
     text: req.body.message || '',
   };
 
-  debug({ mailOptions });
 
   transporter.sendMail(mailOptions, function(error, info) {
     if (error) {

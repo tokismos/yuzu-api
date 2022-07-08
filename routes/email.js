@@ -52,7 +52,5 @@ const sendMail = async (req, res) => {
   });
 }
 
-//Send an email
-
 router.post("/", sendMail);
 module.exports = { default: router, sendMail };

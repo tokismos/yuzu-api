@@ -268,7 +268,7 @@ router.patch("/editImg", async (req, res) => {
     
 
     const result = await recipe.find({ imgUrl: req.body.oldUrl });
-    res.status(200).send(result);
+    res.status(200).send({ message: "Get resultf",result });
   
     // await recipe.findByIdAndUpdate(
     //     result[0]._id,

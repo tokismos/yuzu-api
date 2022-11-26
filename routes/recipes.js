@@ -280,17 +280,18 @@ router.post("/editImg", async (req, res) => {
       id = el._id
        
     })
-    await recipe.findByIdAndUpdate(
-      result[0]._id,
-      { imgURL: req.body.newImg },
-      function (err, result) {
-        if (err) {
-          res.send(err);
-        } else {
-          res.status(200).send(result);
-        }
-      }
-    )
+    res.status(200).send(id);
+    // await recipe.findByIdAndUpdate(
+    //   result[0]._id,
+    //   { imgURL: req.body.newImg },
+    //   function (err, result) {
+    //     if (err) {
+    //       res.send(err);
+    //     } else {
+    //       res.status(200).send(result);
+    //     }
+    //   }
+    // )
 
 
   }

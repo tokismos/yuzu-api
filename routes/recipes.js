@@ -21,6 +21,8 @@ const firebaseConfig = {
 
 const fireApp = admin.initializeApp(firebaseConfig);
 
+
+
 router.get("/all", async (req, res) => {
   const result = await recipe.find({});
   res.send(result);
@@ -267,7 +269,7 @@ router.post("/editImg", async (req, res) => {
   try{
     
     
-    const result = await recipe.find({ imgUrl: req.body.oldImg });
+    const result = await recipe.find({ imgUrl:  { $exists: true,   }, imgUrl: req.body.imgUrl });
     res.status(200).send({data:result});
     // await recipe.findByIdAndUpdate(
     //     result[0]._id,

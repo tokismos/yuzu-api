@@ -262,7 +262,7 @@ router.post("/add", async (req, res) => {
   }
 });
 
-router.patch("/editImg", async (req, res) => {
+router.post("/editImg", async (req, res) => {
 
   try{
     

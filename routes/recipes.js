@@ -10,6 +10,7 @@ const sharp = require('sharp');
 const { getStorage, getBucket, ref, listAll, uploadBytes, getDownloadURL } = require('firebase-admin/storage');
 const admin = require("firebase-admin");
 
+
 const router = express.Router();
 const recipe = require("../models/recipe");
 
@@ -18,6 +19,9 @@ const firebaseConfig = {
   credential: admin.credential.cert(serviceAccount),
   databaseURL: process.env.FIREBASE_DATABASE_URL
 };
+
+const bucket = getStorage().bucket('yuzu-5720e.appspot.com');
+
 
 const fireApp = admin.initializeApp(firebaseConfig);
 
@@ -266,31 +270,35 @@ router.post("/add", async (req, res) => {
 
 router.post("/editImg", async (req, res) => {
 
-  try{
-    
-    
-    const result = await recipe.find({ imgURL:  req.body.oldImg });
+  try {
+
+
+    const result = await recipe.find();
+    result.forEach(async el => {
+      if (el.imgURL.includes(req.body.oldImg))
+        await recipe.findByIdAndUpdate(
+          result[0]._id,
+          { imgURL: req.body.newImg },
+          function (err, result) {
+            if (err) {
+              res.send(err);
+            } else {
+              res.status(200).send(result);
+            }
+          }
+        )
+    })
     res.status(200).send(result);
-   
-    // await recipe.findByIdAndUpdate(
-    //     result[0]._id,
-    //     {imgURL : req.body.newImg},
-    //     function(err, result) {
-    //       if (err) {
-    //         res.send(err);
-    //       } else {
-    //         res.status(200).send(result);
-    //       }
-    //     }
-    //     )
+
+
   }
-  catch(err) {
+  catch (err) {
     res.status(400).send({ message: "Error, NOT ADDED TO DB", error: err });
   }
 
-  
 
- 
+
+
 });
 
 module.exports = router;

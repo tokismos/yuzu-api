@@ -273,7 +273,7 @@ router.post("/editImg", async (req, res) => {
    
     await recipe.findByIdAndUpdate(
         result[0]._id,
-        {imgUrl : req.body.newImg},
+        {imgURL : req.body.newImg},
         function(err, result) {
           if (err) {
             res.send(err);

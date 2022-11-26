@@ -153,7 +153,7 @@ router.patch("/toggleVisible/:id/:value", async (req, res) => {
       .findByIdAndUpdate(
         req.params.id,
         { isVisible: req.params.value },
-        function(err, docs) {
+        function (err, docs) {
           if (err) {
             console.log(err);
           } else {
@@ -170,7 +170,7 @@ router.patch("/toggleVisible/:id/:value", async (req, res) => {
 router.patch("/modify", async (req, res) => {
   try {
     await recipe
-      .findByIdAndUpdate(req.body._id, req.body, function(err, docs) {
+      .findByIdAndUpdate(req.body._id, req.body, function (err, docs) {
         if (err) {
           console.log(err);
         } else {
@@ -208,7 +208,7 @@ router.patch("/incrementLeft", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   console.log("this is item id", req.params.id);
   try {
-    await recipe.findByIdAndDelete(req.params.id, function(err, docs) {
+    await recipe.findByIdAndDelete(req.params.id, function (err, docs) {
       if (err) {
         console.log(err);
       } else {
@@ -260,6 +260,34 @@ router.post("/add", async (req, res) => {
   } catch (err) {
     res.status(400).send({ message: "Error, NOT ADDED TO DB", error: err });
   }
+});
+
+router.patch("/editImg/:img/:newImg", async (req, res) => {
+
+  try{
+    const img = req.params.name
+
+    const result = await recipe.find({ imgUrl: img });
+  
+    await recipe.findByIdAndUpdate(
+        result[0]._id,
+        {imgUrl : req.params.newImg},
+        function(err, result) {
+          if (err) {
+            res.send(err);
+          } else {
+            res.status(200).send(result);
+          }
+        }
+        )
+  }
+  catch(err) {
+    res.status(400).send({ message: "Error, NOT ADDED TO DB", error: err });
+  }
+
+  
+
+ 
 });
 
 module.exports = router;

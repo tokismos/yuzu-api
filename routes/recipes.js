@@ -262,16 +262,16 @@ router.post("/add", async (req, res) => {
   }
 });
 
-router.patch("/editImg/:img/:newImg", async (req, res) => {
+router.patch("/editImg", async (req, res) => {
 
   try{
-    const img = req.params.name
+    
 
-    const result = await recipe.find({ imgUrl: img });
+    const result = await recipe.find({ imgUrl: req.body.oldUrl });
   
     await recipe.findByIdAndUpdate(
         result[0]._id,
-        {imgUrl : req.params.newImg},
+        {imgUrl : req.body.newUrl},
         function(err, result) {
           if (err) {
             res.send(err);

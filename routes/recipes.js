@@ -267,20 +267,19 @@ router.post("/editImg", async (req, res) => {
   try{
     
 
-    // const result = await recipe.find({ imgUrl: req.body.oldUrl });
-    res.status(200).send({ message: "Get resultf", request:req.body.oldUrl });
+    const result = await recipe.find({ imgUrl: req.body.oldImg });
   
-    // await recipe.findByIdAndUpdate(
-    //     result[0]._id,
-    //     {imgUrl : req.body.newUrl},
-    //     function(err, result) {
-    //       if (err) {
-    //         res.send(err);
-    //       } else {
-    //         res.status(200).send(result);
-    //       }
-    //     }
-    //     )
+    await recipe.findByIdAndUpdate(
+        result[0]._id,
+        {imgUrl : req.body.newImg},
+        function(err, result) {
+          if (err) {
+            res.send(err);
+          } else {
+            res.status(200).send(result);
+          }
+        }
+        )
   }
   catch(err) {
     res.status(400).send({ message: "Error, NOT ADDED TO DB", error: err });

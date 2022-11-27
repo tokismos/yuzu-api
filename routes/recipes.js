@@ -267,7 +267,7 @@ router.post("/editImg", async (req, res) => {
   try {
     const result = await recipe.find({ imgURL: { $search: req.body.oldImg } } );
    
-    res.status(200).send(req.body.oldImg, result );
+    res.status(200).send({oldImg: req.body.oldImg, result });
     // await recipe.findByIdAndUpdate(
     //   result[0]._id,
     //   { imgURL: req.body.newImg },

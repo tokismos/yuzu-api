@@ -262,18 +262,19 @@ router.post("/add", async (req, res) => {
   }
 });
 
-router.post("/editImg", async (req, res) => {
+// Utilisé pour compresser toutes images des recettes actuelles
 
-  if (!req.body._id || !req.body.newImg) res.status(400);
-  try {
-    await recipe.findByIdAndUpdate(req.body._id, { imgURL: req.body.newImg }, (err, data) => {
-      if (err) res.status(500).send({ err })
-      res.status(200).send({ data });
-    }).clone();
-  } catch (e) {
-    console.error(e);
-  }
+// router.post("/editImg", async (req, res) => {
+//   if (!req.body._id || !req.body.newImg) res.status(400);
+//   try {
+//     await recipe.findByIdAndUpdate(req.body._id, { imgURL: req.body.newImg }, (err, data) => {
+//       if (err) res.status(500).send({ err })
+//       res.status(200).send({ data });
+//     }).clone();
+//   } catch (e) {
+//     console.error(e);
+//   }
 
-});
+// });
 
 module.exports = router;

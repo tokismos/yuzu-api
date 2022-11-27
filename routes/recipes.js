@@ -268,40 +268,40 @@ router.post("/add", async (req, res) => {
   }
 });
 
-router.post("/editImg", async (req, res) => {
+// router.post("/editImg", async (req, res) => {
 
-  try {
+//   try {
 
 
-    const result = await recipe.find();
-    var id;
-    result.forEach(async el => {
-      if (el.imgURL.includes(req.body.oldImg))
-      id = el._id
+//     const result = await recipe.find();
+//     var id;
+//     result.forEach( el => {
+//       if (el.imgURL.includes(req.body.oldImg))
+//       id = el._id
        
-    })
-    res.status(200).send(id);
-    // await recipe.findByIdAndUpdate(
-    //   result[0]._id,
-    //   { imgURL: req.body.newImg },
-    //   function (err, result) {
-    //     if (err) {
-    //       res.send(err);
-    //     } else {
-    //       res.status(200).send(result);
-    //     }
-    //   }
-    // )
+//     })
+//     res.status(200).send(id);
+//     // await recipe.findByIdAndUpdate(
+//     //   result[0]._id,
+//     //   { imgURL: req.body.newImg },
+//     //   function (err, result) {
+//     //     if (err) {
+//     //       res.send(err);
+//     //     } else {
+//     //       res.status(200).send(result);
+//     //     }
+//     //   }
+//     // )
 
 
-  }
-  catch (err) {
-    res.status(400).send({ message: "Error, NOT ADDED TO DB", error: err });
-  }
+//   }
+//   catch (err) {
+//     res.status(400).send({ message: "Error, NOT ADDED TO DB", error: err });
+//   }
 
 
 
 
-});
+// });
 
 module.exports = router;

@@ -267,18 +267,18 @@ router.post("/editImg", async (req, res) => {
   try {
     const result = await recipe.find({ imgURL: { '$regex': req.body.oldImg } } );
    
-    res.status(200).send({oldImg: req.body.oldImg, result });
-    // await recipe.findByIdAndUpdate(
-    //   result[0]._id,
-    //   { imgURL: req.body.newImg },
-    //   function (err, result) {
-    //     if (err) {
-    //       res.send(err);
-    //     } else {
-    //       res.status(200).send(result);
-    //     }
-    //   }
-    // )
+   
+    await recipe.findByIdAndUpdate(
+      req.body.id,
+      { imgURL: req.body.newImg },
+      function (err, result) {
+        if (err) {
+          res.send(err);
+        } else {
+          res.status(200).send(result);
+        }
+      }
+    )
 
 
   }

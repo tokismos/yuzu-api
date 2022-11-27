@@ -264,27 +264,16 @@ router.post("/add", async (req, res) => {
 
 router.post("/editImg", async (req, res) => {
 
+  if (!req.body._id || !req.body.newImg) res.status(400);
   try {
-  
-   
-   
-    await recipe.findByIdAndUpdate(
-      req.body.id,
-      { imgURL: req.body.newImg },
-      function (err, result) {
-        if (err) {
-          res.send(err);
-        } else {
-          res.status(200).send(result);
-        }
-      }
-    )
-
-
+    await recipe.findByIdAndUpdate(req.body._id, { imgURL: req.body.newImg }, (err, data) => {
+      if (err) res.status(500).send({ err })
+      res.status(200).send({ data });
+    }).clone();
+  } catch (e) {
+    console.error(e);
   }
-  catch (err) {
-    res.status(400).send({ message: "Error, NOT ADDED TO DB", error: err });
-  }
+
 });
 
 module.exports = router;

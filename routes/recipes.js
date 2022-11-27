@@ -10,7 +10,6 @@ const sharp = require('sharp');
 const { getStorage, getBucket, ref, listAll, uploadBytes, getDownloadURL } = require('firebase-admin/storage');
 const admin = require("firebase-admin");
 
-
 const router = express.Router();
 const recipe = require("../models/recipe");
 
@@ -20,12 +19,7 @@ const firebaseConfig = {
   databaseURL: process.env.FIREBASE_DATABASE_URL
 };
 
-const bucket = getStorage().bucket('yuzu-5720e.appspot.com');
-
-
 const fireApp = admin.initializeApp(firebaseConfig);
-
-
 
 router.get("/all", async (req, res) => {
   const result = await recipe.find({});
@@ -159,7 +153,7 @@ router.patch("/toggleVisible/:id/:value", async (req, res) => {
       .findByIdAndUpdate(
         req.params.id,
         { isVisible: req.params.value },
-        function (err, docs) {
+        function(err, docs) {
           if (err) {
             console.log(err);
           } else {
@@ -176,7 +170,7 @@ router.patch("/toggleVisible/:id/:value", async (req, res) => {
 router.patch("/modify", async (req, res) => {
   try {
     await recipe
-      .findByIdAndUpdate(req.body._id, req.body, function (err, docs) {
+      .findByIdAndUpdate(req.body._id, req.body, function(err, docs) {
         if (err) {
           console.log(err);
         } else {
@@ -214,7 +208,7 @@ router.patch("/incrementLeft", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   console.log("this is item id", req.params.id);
   try {
-    await recipe.findByIdAndDelete(req.params.id, function (err, docs) {
+    await recipe.findByIdAndDelete(req.params.id, function(err, docs) {
       if (err) {
         console.log(err);
       } else {
@@ -267,41 +261,5 @@ router.post("/add", async (req, res) => {
     res.status(400).send({ message: "Error, NOT ADDED TO DB", error: err });
   }
 });
-
-// router.post("/editImg", async (req, res) => {
-
-//   try {
-
-
-//     const result = await recipe.find();
-//     var id;
-//     result.forEach( el => {
-//       if (el.imgURL.includes(req.body.oldImg))
-//       id = el._id
-       
-//     })
-//     res.status(200).send(id);
-//     // await recipe.findByIdAndUpdate(
-//     //   result[0]._id,
-//     //   { imgURL: req.body.newImg },
-//     //   function (err, result) {
-//     //     if (err) {
-//     //       res.send(err);
-//     //     } else {
-//     //       res.status(200).send(result);
-//     //     }
-//     //   }
-//     // )
-
-
-//   }
-//   catch (err) {
-//     res.status(400).send({ message: "Error, NOT ADDED TO DB", error: err });
-//   }
-
-
-
-
-// });
 
 module.exports = router;

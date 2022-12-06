@@ -177,7 +177,7 @@ router.patch("/toggleVisible/:id/:value", async (req, res) => {
 });
 router.patch("/modify/:authId", async (req, res) => {
   if(!isAdmin(req.params.authId)) 
-  res.status(400)
+  res.status(400).send({ message: "Error, NOT MODIFIED", auth:req.params.authId});
   try {
 
     await recipe

@@ -130,10 +130,11 @@ router.get("/filters", async (req, res) => {
   res.send(result);
   return result;
 });
-router.patch("/tmp", async (req, res) => {
-  if (!isAdmin(req.body.authId))
+router.patch("/tmp/:authId", async (req, res) => {
+
+  if (!isAdmin(req.params.authId))
   {
-    res.status(401).send({ message: "CANT ACCESS" });
+    res.status(200).send({ message: "CANT ACCESS", params:req.params });
     return
   }
   try {
@@ -180,10 +181,11 @@ router.get("/:id", async (req, res) => {
   return result;
 });
 //Modifier la recette
-router.patch("/toggleVisible/:id/:value", async (req, res) => {
-  if (!isAdmin(req.body.authId))
+router.patch("/toggleVisible/:id/:value/:authId", async (req, res) => {
+
+  if (!isAdmin(req.params.authId))
   {
-    res.status(401).send({ message: "CANT ACCESS" });
+    res.status(200).send({ message: "CANT ACCESS", params:req.params });
     return
   }
   try {
@@ -205,11 +207,13 @@ router.patch("/toggleVisible/:id/:value", async (req, res) => {
     res.status(400).send({ message: "Error, NOT MODIFIED", error: e });
   }
 });
-router.patch("/modify", async (req, res) => {
-if (!isAdmin(req.body.authId)){
-  res.status(401).send({ message: "CANT ACCESS" });
-  return
-}
+router.patch("/modify/:authId", async (req, res) => {
+
+  if (!isAdmin(req.params.authId))
+  {
+    res.status(200).send({ message: "CANT ACCESS", params:req.params });
+    return
+  }
   delete req.body.authId
   try {
 
@@ -249,10 +253,11 @@ router.patch("/incrementLeft", async (req, res) => {
   }
 });
 //Supprimer la recette
-router.delete("/:id", async (req, res) => {
-  console.log("this is item id", req.params.id);
-  if (!isAdmin(req.body.authId)){
-    res.status(200).send({ message: "CANT ACCESS", body: req.body });
+router.delete("/:id/:authId", async (req, res) => {
+
+  if (!isAdmin(req.params.authId))
+  {
+    res.status(200).send({ message: "CANT ACCESS", params:req.params });
     return
   }
 
@@ -270,11 +275,11 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-router.post('/thumb', async (req, res) => {
-  if (!req.body.thumbURL || !req.body.item._id || !isAdmin(req.body.authId))
+router.post('/thumb/:authId', async (req, res) => {
+  if (!req.body.thumbURL || !req.body.item._id || !isAdmin(req.params.authId))
   {
-  res.status(401).send({ message: "CANT ACCESS" });
-  return
+    res.status(200).send({ message: "CANT ACCESS", params:req.params });
+    return
 }
   try {
     await recipe.findByIdAndUpdate(req.body.item._id, { thumbURL: req.body.thumbURL }, (err, data) => {
@@ -286,11 +291,11 @@ router.post('/thumb', async (req, res) => {
   }
 })
 
-router.post("/add", async (req, res) => {
+router.post("/add/:authId", async (req, res) => {
 
-  if (!isAdmin(req.body.authId))
+  if (!isAdmin(req.params.authId))
   {
-    res.status(401).send({ message: "CANT ACCESS" });
+    res.status(200).send({ message: "CANT ACCESS", params:req.params });
     return
   }
 

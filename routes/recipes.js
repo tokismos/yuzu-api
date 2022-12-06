@@ -214,7 +214,6 @@ router.patch("/modify/:authId", async (req, res) => {
     res.status(401);
     return
   }
-  delete req.body.authId
   try {
 
     await recipe

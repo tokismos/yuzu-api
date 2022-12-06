@@ -34,23 +34,23 @@ router.get("/all", async (req, res) => {
 
 });
 
-// router.get("/ratings", async (req, res) => {
+router.get("/ratings", async (req, res) => {
 
-//   // if (!isAdmin(req.body.authId))
-//   // res.status(200).send({ message: "CANT ACCESS" });
+  // if (!isAdmin(req.body.authId))
+  // res.status(200).send({ message: "CANT ACCESS" });
   
-//   var ref = db.ref("/rate");
+  var ref = db.ref("/rate");
 
-//   const result = await ref.once('value', (data) => {
-//     return data
-//   });
+  const result = await ref.once('value', (data) => {
+    return data
+  });
 
-//   res.send(result);
+  res.send(result);
 
-//   return result;
+  return result;
 
   
-// });
+});
 
 router.get("/", async (req, res) => {
   let filters = [];

@@ -23,7 +23,7 @@ admin.initializeApp(firebaseConfig);
 
 var db = admin.database();
 
-const adminUsers = ["i8uSHWXtaFXXqBKqnyg8MaDA40n1"]
+const adminUsers = [process.env.ADMIN_USER1]
 
 const isAdmin = (id) => { return adminUsers.includes(id) }
 

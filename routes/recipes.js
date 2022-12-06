@@ -19,18 +19,39 @@ const firebaseConfig = {
   databaseURL: process.env.FIREBASE_DATABASE_URL
 };
 
-const fireApp = admin.initializeApp(firebaseConfig);
+admin.initializeApp(firebaseConfig);
+
+var db = admin.database();
 
 const adminUsers = ["i8uSHWXtaFXXqBKqnyg8MaDA40n1"]
 
-const isAdmin = (id) => {return adminUsers.includes(id)}
+const isAdmin = (id) => { return adminUsers.includes(id) }
 
 router.get("/all", async (req, res) => {
   const result = await recipe.find({});
   res.send(result);
-
   return result;
+
 });
+
+// router.get("/ratings", async (req, res) => {
+
+//   // if (!isAdmin(req.body.authId))
+//   // res.status(200).send({ message: "CANT ACCESS" });
+  
+//   var ref = db.ref("/rate");
+
+//   const result = await ref.once('value', (data) => {
+//     return data
+//   });
+
+//   res.send(result);
+
+//   return result;
+
+  
+// });
+
 router.get("/", async (req, res) => {
   let filters = [];
   //get all the data from url and put it in array to spread it in $and
@@ -107,8 +128,8 @@ router.get("/filters", async (req, res) => {
   return result;
 });
 router.patch("/tmp", async (req, res) => {
-  if(!isAdmin(req.body.authId)) 
-  res.status(400)
+  if (!isAdmin(req.body.authId))
+    res.status(200).send({ message: "CANT ACCESS" });
   try {
     await recipe.updateMany(
       {},
@@ -154,14 +175,14 @@ router.get("/:id", async (req, res) => {
 });
 //Modifier la recette
 router.patch("/toggleVisible/:id/:value", async (req, res) => {
-  if(!isAdmin(req.body.authId)) 
-  res.status(400)
+  if (!isAdmin(req.body.authId))
+    res.status(200).send({ message: "CANT ACCESS" });
   try {
     await recipe
       .findByIdAndUpdate(
         req.params.id,
         { isVisible: req.params.value },
-        function(err, docs) {
+        function (err, docs) {
           if (err) {
             console.log(err);
           } else {
@@ -176,12 +197,14 @@ router.patch("/toggleVisible/:id/:value", async (req, res) => {
   }
 });
 router.patch("/modify", async (req, res) => {
-  if(!isAdmin(req.body.authId)) 
-  res.status(400)
+  if (!isAdmin(req.body.authId))
+    res.status(200).send({ message: "CANT ACCESS" });
+
+  delete req.body.authId
   try {
 
     await recipe
-      .findByIdAndUpdate(req.body._id, req.body, function(err, docs) {
+      .findByIdAndUpdate(req.body._id, req.body, function (err, docs) {
         if (err) {
           console.log(err);
         } else {
@@ -218,16 +241,16 @@ router.patch("/incrementLeft", async (req, res) => {
 //Supprimer la recette
 router.delete("/:id", async (req, res) => {
   console.log("this is item id", req.params.id);
-  if(!isAdmin(req.body.authId)) 
-  res.status(400)
+  if (!isAdmin(req.body.authId))
+    res.status(200).send({ message: "CANT ACCESS" });
 
   try {
-    await recipe.findByIdAndDelete(req.params.id, function(err, docs) {
+    await recipe.findByIdAndDelete(req.params.id, function (err, docs) {
       if (err) {
         console.log(err);
       } else {
         console.log("Deleted user ", docs);
-        res.status(200).send({ message: "User deleted successfuly" , isAdmin:isAdmin(req.body.authId),authId:req.body.authId, body:req.body });
+        res.status(200).send({ message: "User deleted successfuly", isAdmin: isAdmin(req.body.authId), authId: req.body.authId, body: req.body });
       }
     });
   } catch (e) {
@@ -236,7 +259,8 @@ router.delete("/:id", async (req, res) => {
 });
 
 router.post('/thumb', async (req, res) => {
-  if (!req.body.thumbURL || !req.body.item._id || !isAdmin(req.body.authId)) res.status(400);
+  if (!req.body.thumbURL || !req.body.item._id || !isAdmin(req.body.authId))
+    res.status(200).send({ message: "CANT ACCESS" });
   try {
     await recipe.findByIdAndUpdate(req.body.item._id, { thumbURL: req.body.thumbURL }, (err, data) => {
       if (err) res.status(500).send({ err })
@@ -249,9 +273,9 @@ router.post('/thumb', async (req, res) => {
 
 router.post("/add", async (req, res) => {
 
-  if(!isAdmin(req.body.authId)) 
-  res.status(400)
-  
+  if (!isAdmin(req.body.authId))
+    res.status(200).send({ message: "CANT ACCESS" });
+
   const newRecipe = new recipe({
     imgURL: req.body.imgURL,
     thumbURL: req.body.thumbURL,

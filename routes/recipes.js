@@ -16,12 +16,14 @@ const recipe = require("../models/recipe");
 const serviceAccount = require('../yuzu-5720e-firebase-adminsdk-65ckj-bdc318a85a.json');
 const firebaseConfig = {
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: process.env.FIREBASE_DATABASE_URL
+  databaseURL: process.env.FIREBASE_DATABASE_URL,
 };
 
 admin.initializeApp(firebaseConfig);
 
 var db = admin.database();
+
+const bucket = getStorage().bucket('gs://yuzu-5720e.appspot.com');
 
 const adminUsers = [process.env.ADMIN_USER1]
 
@@ -36,12 +38,11 @@ router.get("/all", async (req, res) => {
 
 router.get("/ratings/:authId", async (req, res) => {
 
-  if (!isAdmin(req.params.authId))
-  {
+  if (!isAdmin(req.params.authId)) {
     res.status(401);
     return
   }
-  
+
   var ref = db.ref("/rate");
 
   const result = await ref.once('value', (data) => {
@@ -52,7 +53,7 @@ router.get("/ratings/:authId", async (req, res) => {
 
   return result;
 
-  
+
 });
 
 router.get("/", async (req, res) => {
@@ -132,8 +133,7 @@ router.get("/filters", async (req, res) => {
 });
 router.patch("/tmp/:authId", async (req, res) => {
 
-  if (!isAdmin(req.params.authId))
-  {
+  if (!isAdmin(req.params.authId)) {
     res.status(401);
     return
   }
@@ -183,8 +183,7 @@ router.get("/:id", async (req, res) => {
 //Modifier la recette
 router.patch("/toggleVisible/:id/:value/:authId", async (req, res) => {
 
-  if (!isAdmin(req.params.authId))
-  {
+  if (!isAdmin(req.params.authId)) {
     res.status(401);
     return
   }
@@ -207,10 +206,10 @@ router.patch("/toggleVisible/:id/:value/:authId", async (req, res) => {
     res.status(400).send({ message: "Error, NOT MODIFIED", error: e });
   }
 });
+
 router.patch("/modify/:authId", async (req, res) => {
 
-  if (!isAdmin(req.params.authId))
-  {
+  if (!isAdmin(req.params.authId)) {
     res.status(401);
     return
   }
@@ -254,8 +253,7 @@ router.patch("/incrementLeft", async (req, res) => {
 //Supprimer la recette
 router.delete("/:id/:authId", async (req, res) => {
 
-  if (!isAdmin(req.params.authId))
-  {
+  if (!isAdmin(req.params.authId)) {
     res.status(401);
     return
   }
@@ -266,7 +264,7 @@ router.delete("/:id/:authId", async (req, res) => {
         console.log(err);
       } else {
         console.log("Deleted user ", docs);
-        res.status(200).send({ message: "User deleted successfuly"});
+        res.status(200).send({ message: "User deleted successfuly" });
       }
     });
   } catch (e) {
@@ -275,9 +273,8 @@ router.delete("/:id/:authId", async (req, res) => {
 });
 
 router.post('/thumb/:authId', async (req, res) => {
-  if (!req.body.thumbURL || !req.body.item._id || !isAdmin(req.params.authId))
-  {
-  
+  if (!req.body.thumbURL || !req.body.item._id || !isAdmin(req.params.authId)) {
+
     res.status(401);
     return
   }
@@ -292,11 +289,26 @@ router.post('/thumb/:authId', async (req, res) => {
   }
 })
 
+router.post('/uploadstorage/:authId', async (req, res) => {
+  if (!req.body.fileName || !req.body.name || !isAdmin(req.params.authId)) {
+    res.status(401);
+    return
+  }
+  try {
+    const ref = ref(bucket, req.body.fileName);
+    await uploadBytes(ref, req.body.name).then(async ()=> {
+      const url = await getDownloadURL(ref)
+      res.status(200).send({ message: "DATA ADDED TO DB", url });    
+    })
+  } catch (e) {
+    console.error(e);
+  }
+})
+
 router.post("/add/:authId", async (req, res) => {
 
-  if (!isAdmin(req.params.authId))
-  {
-    res.status(200).send({ message: "CANT ACCESS", params:req.params });
+  if (!isAdmin(req.params.authId)) {
+    res.status(401)
     return
   }
 

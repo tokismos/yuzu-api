@@ -23,7 +23,7 @@ admin.initializeApp(firebaseConfig);
 
 var db = admin.database();
 
-const adminUsers = ["i8uSHWXtaFXXqBKqnyg8MaDA40n1","i8uSHWXtaFXXqBKqnyg8MaDA40n1"]
+const adminUsers = [process.env.ADMIN_USER1]
 
 const isAdmin = (id) => { return adminUsers.includes(id) }
 
@@ -38,7 +38,7 @@ router.get("/ratings/:authId", async (req, res) => {
 
   if (!isAdmin(req.params.authId))
   {
-    res.status(200).send({ message: "CANT ACCESS", params:req.params });
+    res.status(401);
     return
   }
   
@@ -134,7 +134,7 @@ router.patch("/tmp/:authId", async (req, res) => {
 
   if (!isAdmin(req.params.authId))
   {
-    res.status(200).send({ message: "CANT ACCESS", params:req.params });
+    res.status(401);
     return
   }
   try {
@@ -185,7 +185,7 @@ router.patch("/toggleVisible/:id/:value/:authId", async (req, res) => {
 
   if (!isAdmin(req.params.authId))
   {
-    res.status(200).send({ message: "CANT ACCESS", params:req.params });
+    res.status(401);
     return
   }
   try {
@@ -211,7 +211,7 @@ router.patch("/modify/:authId", async (req, res) => {
 
   if (!isAdmin(req.params.authId))
   {
-    res.status(200).send({ message: "CANT ACCESS", params:req.params });
+    res.status(401);
     return
   }
   delete req.body.authId
@@ -257,7 +257,7 @@ router.delete("/:id/:authId", async (req, res) => {
 
   if (!isAdmin(req.params.authId))
   {
-    res.status(200).send({ message: "CANT ACCESS", params:req.params });
+    res.status(401);
     return
   }
 
@@ -267,7 +267,7 @@ router.delete("/:id/:authId", async (req, res) => {
         console.log(err);
       } else {
         console.log("Deleted user ", docs);
-        res.status(200).send({ message: "User deleted successfuly", isAdmin: isAdmin(req.body.authId), authId: req.body.authId, body: req.body });
+        res.status(200).send({ message: "User deleted successfuly"});
       }
     });
   } catch (e) {
@@ -278,8 +278,8 @@ router.delete("/:id/:authId", async (req, res) => {
 router.post('/thumb/:authId', async (req, res) => {
   if (!req.body.thumbURL || !req.body.item._id || !isAdmin(req.params.authId))
   {
-    res.status(200).send({ message: "CANT ACCESS", params:req.params });
-    return
+    res.status(401);
+  }
 }
   try {
     await recipe.findByIdAndUpdate(req.body.item._id, { thumbURL: req.body.thumbURL }, (err, data) => {
@@ -295,7 +295,7 @@ router.post("/add/:authId", async (req, res) => {
 
   if (!isAdmin(req.params.authId))
   {
-    res.status(200).send({ message: "CANT ACCESS", params:req.params });
+    res.status(401);
     return
   }
 

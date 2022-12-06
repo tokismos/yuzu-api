@@ -278,9 +278,11 @@ router.delete("/:id/:authId", async (req, res) => {
 router.post('/thumb/:authId', async (req, res) => {
   if (!req.body.thumbURL || !req.body.item._id || !isAdmin(req.params.authId))
   {
+  
     res.status(401);
+    return
   }
-}
+
   try {
     await recipe.findByIdAndUpdate(req.body.item._id, { thumbURL: req.body.thumbURL }, (err, data) => {
       if (err) res.status(500).send({ err })
@@ -295,7 +297,7 @@ router.post("/add/:authId", async (req, res) => {
 
   if (!isAdmin(req.params.authId))
   {
-    res.status(401);
+    res.status(200).send({ message: "CANT ACCESS", params:req.params });
     return
   }
 

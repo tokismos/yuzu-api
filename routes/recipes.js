@@ -252,7 +252,7 @@ router.patch("/incrementLeft", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   console.log("this is item id", req.params.id);
   if (!isAdmin(req.body.authId)){
-    res.status(401).send({ message: "CANT ACCESS" });
+    res.status(200).send({ message: "CANT ACCESS", body: req.body });
     return
   }
 

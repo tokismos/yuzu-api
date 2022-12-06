@@ -177,11 +177,11 @@ router.patch("/toggleVisible/:id/:value", async (req, res) => {
 });
 router.patch("/modify", async (req, res) => {
   if(!isAdmin(req.body.authId)) 
-  res.status(400)
+  res.status(400).send({ body:req.body });
   try {
 
     await recipe
-      .findByIdAndUpdate(req.body._id, req.body, function(err, docs) {
+      .findByIdAndUpdate(req.body._id, req.body.newRecipe, function(err, docs) {
         if (err) {
           console.log(err);
         } else {

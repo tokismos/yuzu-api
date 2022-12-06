@@ -38,7 +38,7 @@ router.get("/ratings", async (req, res) => {
 
   if (!isAdmin(req.body.authId))
   {
-    res.status(400).send({ message: "CANT ACCESS" });
+    res.status(401).send({ message: "CANT ACCESS" });
     return
   }
   
@@ -133,7 +133,7 @@ router.get("/filters", async (req, res) => {
 router.patch("/tmp", async (req, res) => {
   if (!isAdmin(req.body.authId))
   {
-    res.status(400).send({ message: "CANT ACCESS" });
+    res.status(401).send({ message: "CANT ACCESS" });
     return
   }
   try {
@@ -183,7 +183,7 @@ router.get("/:id", async (req, res) => {
 router.patch("/toggleVisible/:id/:value", async (req, res) => {
   if (!isAdmin(req.body.authId))
   {
-    res.status(400).send({ message: "CANT ACCESS" });
+    res.status(401).send({ message: "CANT ACCESS" });
     return
   }
   try {
@@ -207,11 +207,9 @@ router.patch("/toggleVisible/:id/:value", async (req, res) => {
 });
 router.patch("/modify", async (req, res) => {
 if (!isAdmin(req.body.authId)){
-  res.status(400).send({ message: "CANT ACCESS" });
+  res.status(401).send({ message: "CANT ACCESS" });
   return
 }
-    
-
   delete req.body.authId
   try {
 
@@ -254,7 +252,7 @@ router.patch("/incrementLeft", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   console.log("this is item id", req.params.id);
   if (!isAdmin(req.body.authId)){
-    res.status(400).send({ message: "CANT ACCESS" });
+    res.status(401).send({ message: "CANT ACCESS" });
     return
   }
 
@@ -275,7 +273,7 @@ router.delete("/:id", async (req, res) => {
 router.post('/thumb', async (req, res) => {
   if (!req.body.thumbURL || !req.body.item._id || !isAdmin(req.body.authId))
   {
-  res.status(400).send({ message: "CANT ACCESS" });
+  res.status(401).send({ message: "CANT ACCESS" });
   return
 }
   try {
@@ -292,7 +290,7 @@ router.post("/add", async (req, res) => {
 
   if (!isAdmin(req.body.authId))
   {
-    res.status(400).send({ message: "CANT ACCESS" });
+    res.status(401).send({ message: "CANT ACCESS" });
     return
   }
 

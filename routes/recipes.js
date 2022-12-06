@@ -21,6 +21,10 @@ const firebaseConfig = {
 
 const fireApp = admin.initializeApp(firebaseConfig);
 
+const adminUsers = ["i8uSHWXtaFXXqBKqnyg8MaDA40n1"]
+
+const isAdmin = (id) => {return adminUsers.includes(id)}
+
 router.get("/all", async (req, res) => {
   const result = await recipe.find({});
   res.send(result);
@@ -103,6 +107,8 @@ router.get("/filters", async (req, res) => {
   return result;
 });
 router.patch("/tmp", async (req, res) => {
+  if(!isAdmin(req.body.authId)) 
+  res.status(400)
   try {
     await recipe.updateMany(
       {},
@@ -148,6 +154,8 @@ router.get("/:id", async (req, res) => {
 });
 //Modifier la recette
 router.patch("/toggleVisible/:id/:value", async (req, res) => {
+  if(!isAdmin(req.body.authId)) 
+  res.status(400)
   try {
     await recipe
       .findByIdAndUpdate(
@@ -168,7 +176,10 @@ router.patch("/toggleVisible/:id/:value", async (req, res) => {
   }
 });
 router.patch("/modify", async (req, res) => {
+  if(!isAdmin(req.body.authId)) 
+  res.status(400)
   try {
+
     await recipe
       .findByIdAndUpdate(req.body._id, req.body, function(err, docs) {
         if (err) {
@@ -207,6 +218,9 @@ router.patch("/incrementLeft", async (req, res) => {
 //Supprimer la recette
 router.delete("/:id", async (req, res) => {
   console.log("this is item id", req.params.id);
+  if(!isAdmin(req.body.authId)) 
+  res.status(400)
+
   try {
     await recipe.findByIdAndDelete(req.params.id, function(err, docs) {
       if (err) {
@@ -222,7 +236,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 router.post('/thumb', async (req, res) => {
-  if (!req.body.thumbURL || !req.body.item._id) res.status(400);
+  if (!req.body.thumbURL || !req.body.item._id || !isAdmin(req.body.authId)) res.status(400);
   try {
     await recipe.findByIdAndUpdate(req.body.item._id, { thumbURL: req.body.thumbURL }, (err, data) => {
       if (err) res.status(500).send({ err })
@@ -235,6 +249,9 @@ router.post('/thumb', async (req, res) => {
 
 router.post("/add", async (req, res) => {
 
+  if(!isAdmin(req.body.authId)) 
+  res.status(400)
+  
   const newRecipe = new recipe({
     imgURL: req.body.imgURL,
     thumbURL: req.body.thumbURL,

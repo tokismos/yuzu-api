@@ -34,11 +34,11 @@ router.get("/all", async (req, res) => {
 
 });
 
-router.get("/ratings", async (req, res) => {
+router.get("/ratings/:authId", async (req, res) => {
 
-  if (!isAdmin(req.body.authId))
+  if (!isAdmin(req.params.authId))
   {
-    res.status(401).send({ message: "CANT ACCESS" });
+    res.status(200).send({ message: "CANT ACCESS", params:req.params });
     return
   }
   

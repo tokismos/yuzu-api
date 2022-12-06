@@ -175,8 +175,8 @@ router.patch("/toggleVisible/:id/:value", async (req, res) => {
     res.status(400).send({ message: "Error, NOT MODIFIED", error: e });
   }
 });
-router.patch("/modify", async (req, res) => {
-  if(!isAdmin(req.body.authId)) 
+router.patch("/modify/:authId", async (req, res) => {
+  if(!isAdmin(req.params.authId)) 
   res.status(400)
   try {
 

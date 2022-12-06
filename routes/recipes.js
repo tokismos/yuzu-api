@@ -177,7 +177,9 @@ router.patch("/toggleVisible/:id/:value", async (req, res) => {
 });
 router.patch("/modify", async (req, res) => {
   if(!isAdmin(req.body.authId)) 
-  res.status(400)
+  res.status(200).send({ message: "DATA NOT ADDED TO DB" });
+  
+  delete req.body.authId
   try {
 
     await recipe

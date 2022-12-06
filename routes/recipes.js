@@ -36,8 +36,8 @@ router.get("/all", async (req, res) => {
 
 router.get("/ratings", async (req, res) => {
 
-  if (!isAdmin(req.body.authId))
-  res.status(200).send({ message: "CANT ACCESS" });
+  // if (!isAdmin(req.body.authId))
+  // res.status(200).send({ message: "CANT ACCESS" });
   
   var ref = db.ref("/rate");
 

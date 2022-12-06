@@ -23,7 +23,7 @@ admin.initializeApp(firebaseConfig);
 
 var db = admin.database();
 
-const bucket = getStorage().bucket('gs://yuzu-5720e.appspot.com');
+const storage = getStorage().bucket('gs://yuzu-5720e.appspot.com');
 
 const adminUsers = [process.env.ADMIN_USER1]
 
@@ -290,15 +290,17 @@ router.post('/thumb/:authId', async (req, res) => {
 })
 
 router.post('/uploadstorage/:authId', async (req, res) => {
-  if (!req.body.fileName || !req.body.name || !isAdmin(req.params.authId)) {
+  if (!req.body.fileName || !req.body.file || !isAdmin(req.params.authId)) {
     res.status(401);
     return
   }
   try {
-    const ref = ref(bucket, req.body.fileName);
-    await uploadBytes(ref, req.body.name).then(async ()=> {
-      const url = await getDownloadURL(ref)
-      res.status(200).send({ message: "DATA ADDED TO DB", url });    
+    
+    const fileRef = ref(storage, req.body.fileName);
+    return await uploadBytes(fileRef, req.body.file).then(async () => {
+      alert('finish1')
+     const url = await getDownloadURL(fileRef)
+     res.status(200).send({ message: "DATA ADDED TO DB", url });     
     })
   } catch (e) {
     console.error(e);

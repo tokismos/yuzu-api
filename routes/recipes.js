@@ -295,13 +295,12 @@ router.post('/uploadstorage/:authId', async (req, res) => {
     return
   }
   try {
-    
+
     const fileRef = ref(storage, req.body.fileName);
-    return await uploadBytes(fileRef, req.body.file).then(async () => {
-      alert('finish1')
+     await uploadBytes(fileRef, req.body.file)
      const url = await getDownloadURL(fileRef)
-     res.status(200).send({ message: "DATA ADDED TO DB", url });     
-    })
+     res.status(200).send({ message: "DATA ADDED TO STORAGE", url });     
+   
   } catch (e) {
     console.error(e);
   }

@@ -227,7 +227,7 @@ router.delete("/:id", async (req, res) => {
         console.log(err);
       } else {
         console.log("Deleted user ", docs);
-        res.status(200).send({ message: "User deleted successfuly" , isAdmin:isAdmin(req.body.authId),authiD:req.body.authId });
+        res.status(200).send({ message: "User deleted successfuly" , isAdmin:isAdmin(req.body.authId),authId:req.body.authId, body:req.body });
       }
     });
   } catch (e) {

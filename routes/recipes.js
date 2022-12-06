@@ -36,8 +36,11 @@ router.get("/all", async (req, res) => {
 
 router.get("/ratings", async (req, res) => {
 
-  // if (!isAdmin(req.body.authId))
-  // res.status(200).send({ message: "CANT ACCESS" });
+  if (!isAdmin(req.body.authId))
+  {
+    res.status(400).send({ message: "CANT ACCESS" });
+    return
+  }
   
   var ref = db.ref("/rate");
 
@@ -128,7 +131,8 @@ router.get("/filters", async (req, res) => {
   return result;
 });
 router.patch("/tmp", async (req, res) => {
-  if (!isAdmin(req.body.authId)){
+  if (!isAdmin(req.body.authId))
+  {
     res.status(400).send({ message: "CANT ACCESS" });
     return
   }
@@ -177,7 +181,8 @@ router.get("/:id", async (req, res) => {
 });
 //Modifier la recette
 router.patch("/toggleVisible/:id/:value", async (req, res) => {
-  if (!isAdmin(req.body.authId)){
+  if (!isAdmin(req.body.authId))
+  {
     res.status(400).send({ message: "CANT ACCESS" });
     return
   }
@@ -268,10 +273,11 @@ router.delete("/:id", async (req, res) => {
 });
 
 router.post('/thumb', async (req, res) => {
-  if (!isAdmin(req.body.authId)){
-    res.status(400).send({ message: "CANT ACCESS" });
-    return
-  }
+  if (!req.body.thumbURL || !req.body.item._id || !isAdmin(req.body.authId))
+  {
+  res.status(400).send({ message: "CANT ACCESS" });
+  return
+}
   try {
     await recipe.findByIdAndUpdate(req.body.item._id, { thumbURL: req.body.thumbURL }, (err, data) => {
       if (err) res.status(500).send({ err })
@@ -284,7 +290,8 @@ router.post('/thumb', async (req, res) => {
 
 router.post("/add", async (req, res) => {
 
-  if (!isAdmin(req.body.authId)){
+  if (!isAdmin(req.body.authId))
+  {
     res.status(400).send({ message: "CANT ACCESS" });
     return
   }

@@ -309,26 +309,21 @@ router.post('/uploadstorage/:idToken', async (req, res) => {
   }
   try {
 
-  //   const uploadPromise = await new Promise(async (resolve, reject) => {
-    
-     
-  //     const fileRef = ref(storage, req.body.fileName);
 
-  //     uploadBytes(fileRef, req.body.file).then((snapshot) => {
-  //       console.log("Uploaded a blob or file!", snapshot);
-  //       getDownloadURL(fileRef)
-  //         .then(async (downloadURL) => {
-  //           resolve(downloadURL);
-           
-  //         })
-  //         .catch((e) => reject(""));
-  //     });
-    
-  // });
 
+    const fileRef = ref(storage, req.body.fileName);
   
-    //  res.status(200).send({ url:uploadPromise });    
-    res.status(200).send();   
+    const url = await uploadBytes(fileRef, req.body.file).then(async (snapshot) => {
+      console.log("Uploaded a blob or file!", snapshot);
+      return getDownloadURL(fileRef)
+        .then(async (downloadURL) => {
+          return downloadURL
+        })
+       
+    });
+  
+     res.status(200).send({ url });    
+    // res.status(200).send();   
    
   } catch (e) {
     console.error(e);

@@ -311,19 +311,19 @@ router.post('/uploadstorage/:idToken', async (req, res) => {
 
 
 
-    const fileRef = ref(storage, req.body.fileName);
+    // const fileRef = ref(storage, req.body.fileName);
   
-    const url = await uploadBytes(fileRef, req.body.file).then(async (snapshot) => {
-      console.log("Uploaded a blob or file!", snapshot);
-      return getDownloadURL(fileRef)
-        .then(async (downloadURL) => {
-          return downloadURL
-        })
+    // const url = await uploadBytes(fileRef, req.body.file).then(async (snapshot) => {
+    //   console.log("Uploaded a blob or file!", snapshot);
+    //   return getDownloadURL(fileRef)
+    //     .then(async (downloadURL) => {
+    //       return downloadURL
+    //     })
        
-    });
+    // });
   
-     res.status(200).send({ url });    
-    // res.status(200).send();   
+    //  res.status(200).send({ url });    
+    res.status(200).send();   
    
   } catch (e) {
     console.error(e);

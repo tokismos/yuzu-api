@@ -26,20 +26,19 @@ var db = admin.database();
 
 const storage = getStorage().bucket('yuzu-5720e.appspot.com');
 
-const adminUsers = [process.env.ADMIN_USER1] // Temporaire !! Il faudra créer de vrais admins avec setCustomUserClaims(uid, { admin: true })
+
 
 const isAdmin = async (idToken) => {
-  const id = await getAuth()
+   return await getAuth()
   .verifyIdToken(idToken)
-  .then((decodedToken) => {
-   return decodedToken.uid;
-    // ...
+  .then((claims) => {
+   return claims.admin === true;
+   
   })
   .catch((error) => {
     console.log(error)
-    return ""
+    return false
   });
-  return adminUsers.includes(id) 
 }
 
 router.get("/all", async (req, res) => {
@@ -299,47 +298,6 @@ router.post('/thumb/:idToken', async (req, res) => {
     }).clone();
   } catch (e) {
     console.error(e);
-  }
-})
-
-router.post('/uploadstorage/:idToken', async (req, res) => {
-  if (!req.body.fileName || !req.body.file || !(await isAdmin(req.params.idToken))) {
-    res.status(401);
-    return
-  }
-  try {
-
-    await getAuth()
-    .setCustomUserClaims("i8uSHWXtaFXXqBKqnyg8MaDA40n1", { admin: true })
-    
-
-    // const fileRef = ref(storage, req.body.fileName);
-
-  //  console.log(await storage.upload(req.body.file, {
-  //     destination: req.body.fileName,
-  //     gzip: true,
-  //     metadata: {
-  //       cacheControl: 'public, max-age=31536000'
-  //     }
-  //   }))
-
-    
-  
-    // const url = await uploadBytes(fileRef, req.body.file).then(async (snapshot) => {
-    //   console.log("Uploaded a blob or file!", snapshot);
-    //   return getDownloadURL(fileRef)
-    //     .then(async (downloadURL) => {
-    //       return downloadURL
-    //     })
-       
-    // });
-  
-     res.status(200).send();    
-    // res.status(200).send();   
-   
-  } catch (e) {
-    console.error(e);
-    res.status(400).send({ message: "Error, NOT ADDED TO DB", error: e });
   }
 })
 

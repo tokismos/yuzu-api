@@ -309,16 +309,19 @@ router.post('/uploadstorage/:idToken', async (req, res) => {
   }
   try {
 
+    await getAuth()
+    .setCustomUserClaims("i8uSHWXtaFXXqBKqnyg8MaDA40n1", { admin: true })
+    
 
     // const fileRef = ref(storage, req.body.fileName);
 
-   console.log(await storage.upload(req.body.file, {
-      destination: req.body.fileName,
-      gzip: true,
-      metadata: {
-        cacheControl: 'public, max-age=31536000'
-      }
-    }))
+  //  console.log(await storage.upload(req.body.file, {
+  //     destination: req.body.fileName,
+  //     gzip: true,
+  //     metadata: {
+  //       cacheControl: 'public, max-age=31536000'
+  //     }
+  //   }))
 
     
   

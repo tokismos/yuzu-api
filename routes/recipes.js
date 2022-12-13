@@ -8,6 +8,7 @@ const path = require('path');
 const os = require('os');
 const sharp = require('sharp');
 const { getStorage, getBucket, ref, listAll, uploadBytes, getDownloadURL } = require('firebase-admin/storage');
+const { getAuth } = require('firebase-admin/auth');
 const admin = require("firebase-admin");
 
 const router = express.Router();
@@ -27,7 +28,19 @@ const storage = getStorage().bucket('gs://yuzu-5720e.appspot.com');
 
 const adminUsers = [process.env.ADMIN_USER1]
 
-const isAdmin = (id) => { return adminUsers.includes(id) }
+const isAdmin = async (idToken) => {
+  const id = await getAuth()
+  .verifyIdToken(idToken)
+  .then((decodedToken) => {
+   return decodedToken.uid;
+    // ...
+  })
+  .catch((error) => {
+    console.log(error)
+    return ""
+  });
+  return adminUsers.includes(id) 
+}
 
 router.get("/all", async (req, res) => {
   const result = await recipe.find({});
@@ -36,9 +49,9 @@ router.get("/all", async (req, res) => {
 
 });
 
-router.get("/ratings/:authId", async (req, res) => {
+router.get("/ratings/:idToken", async (req, res) => {
 
-  if (!isAdmin(req.params.authId)) {
+  if (!(await isAdmin(req.params.idToken))) {
     res.status(401);
     return
   }
@@ -131,9 +144,9 @@ router.get("/filters", async (req, res) => {
   res.send(result);
   return result;
 });
-router.patch("/tmp/:authId", async (req, res) => {
+router.patch("/tmp/:idToken", async (req, res) => {
 
-  if (!isAdmin(req.params.authId)) {
+  if (!(await isAdmin(req.params.idToken))) {
     res.status(401);
     return
   }
@@ -181,9 +194,9 @@ router.get("/:id", async (req, res) => {
   return result;
 });
 //Modifier la recette
-router.patch("/toggleVisible/:id/:value/:authId", async (req, res) => {
+router.patch("/toggleVisible/:id/:value/:idToken", async (req, res) => {
 
-  if (!isAdmin(req.params.authId)) {
+  if (!(await isAdmin(req.params.idToken))) {
     res.status(401);
     return
   }
@@ -207,9 +220,9 @@ router.patch("/toggleVisible/:id/:value/:authId", async (req, res) => {
   }
 });
 
-router.patch("/modify/:authId", async (req, res) => {
+router.patch("/modify/:idToken", async (req, res) => {
 
-  if (!isAdmin(req.params.authId)) {
+  if (!(await isAdmin(req.params.idToken))) {
     res.status(401);
     return
   }
@@ -251,9 +264,9 @@ router.patch("/incrementLeft", async (req, res) => {
   }
 });
 //Supprimer la recette
-router.delete("/:id/:authId", async (req, res) => {
+router.delete("/:id/:idToken", async (req, res) => {
 
-  if (!isAdmin(req.params.authId)) {
+  if (!(await isAdmin(req.params.idToken))) {
     res.status(401);
     return
   }
@@ -272,8 +285,8 @@ router.delete("/:id/:authId", async (req, res) => {
   }
 });
 
-router.post('/thumb/:authId', async (req, res) => {
-  if (!req.body.thumbURL || !req.body.item._id || !isAdmin(req.params.authId)) {
+router.post('/thumb/:idToken', async (req, res) => {
+  if (!req.body.thumbURL || !req.body.item._id || !(await isAdmin(req.params.idToken))) {
 
     res.status(401);
     return
@@ -289,26 +302,42 @@ router.post('/thumb/:authId', async (req, res) => {
   }
 })
 
-router.post('/uploadstorage/:authId', async (req, res) => {
-  if (!req.body.fileName || !req.body.file || !isAdmin(req.params.authId)) {
+router.post('/uploadstorage/:idToken', async (req, res) => {
+  if (!req.body.fileName || !req.body.file || !(await isAdmin(req.params.idToken))) {
     res.status(401);
     return
   }
   try {
 
-    const fileRef = ref(storage, req.body.fileName);
-     await uploadBytes(fileRef, req.body.file)
-     const url = await getDownloadURL(fileRef)
-     res.status(200).send({ message: "DATA ADDED TO STORAGE", url });     
+    const uploadPromise = await new Promise(async (resolve, reject) => {
+    
+     
+      const fileRef = ref(storage, req.body.fileName);
+
+      uploadBytes(fileRef, req.body.file).then((snapshot) => {
+        console.log("Uploaded a blob or file!", snapshot);
+        getDownloadURL(fileRef)
+          .then(async (downloadURL) => {
+            resolve(downloadURL);
+           
+          })
+          .catch((e) => reject(""));
+      });
+    
+  });
+
+  
+     res.status(200).send({ url:uploadPromise });     
    
   } catch (e) {
     console.error(e);
+    res.status(400).send({ message: "Error, NOT ADDED TO DB", error: err });
   }
 })
 
-router.post("/add/:authId", async (req, res) => {
+router.post("/add/:idToken", async (req, res) => {
 
-  if (!isAdmin(req.params.authId)) {
+  if (!(await isAdmin(req.params.idToken))) {
     res.status(401)
     return
   }

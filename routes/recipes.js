@@ -312,13 +312,13 @@ router.post('/uploadstorage/:idToken', async (req, res) => {
 
     // const fileRef = ref(storage, req.body.fileName);
 
-   const result = await storage.upload(req.body.file, {
+   console.log(await storage.upload(req.body.file, {
       destination: req.body.fileName,
       gzip: true,
       metadata: {
         cacheControl: 'public, max-age=31536000'
       }
-    })
+    }))
 
     
   
@@ -331,7 +331,7 @@ router.post('/uploadstorage/:idToken', async (req, res) => {
        
     // });
   
-     res.status(200).send({result});    
+     res.status(200).send();    
     // res.status(200).send();   
    
   } catch (e) {

@@ -7,7 +7,7 @@ const Stream = require('stream').Transform;
 const path = require('path');
 const os = require('os');
 const sharp = require('sharp');
-const { getStorage, getBucket, ref, listAll, uploadBytes, getDownloadURL } = require('firebase-admin/storage');
+const { getStorage } = require('firebase-admin/storage');
 const { getAuth } = require('firebase-admin/auth');
 const admin = require("firebase-admin");
 
@@ -24,9 +24,9 @@ admin.initializeApp(firebaseConfig);
 
 var db = admin.database();
 
-const storage = getStorage().bucket('gs://yuzu-5720e.appspot.com');
+const storage = getStorage().bucket('yuzu-5720e.appspot.com');
 
-const adminUsers = [process.env.ADMIN_USER1]
+const adminUsers = [process.env.ADMIN_USER1] // Temporaire !! Il faudra créer de vrais admins avec setCustomUserClaims(uid, { admin: true })
 
 const isAdmin = async (idToken) => {
   const id = await getAuth()
@@ -310,19 +310,28 @@ router.post('/uploadstorage/:idToken', async (req, res) => {
   try {
 
 
+    // const fileRef = ref(storage, req.body.fileName);
 
-    const fileRef = ref(storage, req.body.fileName);
+   const result = await storage.upload(req.body.file, {
+      destination: req.body.fileName,
+      gzip: true,
+      metadata: {
+        cacheControl: 'public, max-age=31536000'
+      }
+    })
+
+    
   
-    const url = await uploadBytes(fileRef, req.body.file).then(async (snapshot) => {
-      console.log("Uploaded a blob or file!", snapshot);
-      return getDownloadURL(fileRef)
-        .then(async (downloadURL) => {
-          return downloadURL
-        })
+    // const url = await uploadBytes(fileRef, req.body.file).then(async (snapshot) => {
+    //   console.log("Uploaded a blob or file!", snapshot);
+    //   return getDownloadURL(fileRef)
+    //     .then(async (downloadURL) => {
+    //       return downloadURL
+    //     })
        
-    });
+    // });
   
-     res.status(200).send({ url });    
+     res.status(200).send({result});    
     // res.status(200).send();   
    
   } catch (e) {

@@ -7,7 +7,6 @@ const Stream = require('stream').Transform;
 const path = require('path');
 const os = require('os');
 const sharp = require('sharp');
-const { getStorage } = require('firebase-admin/storage');
 const { getAuth } = require('firebase-admin/auth');
 const admin = require("firebase-admin");
 
@@ -24,7 +23,6 @@ admin.initializeApp(firebaseConfig);
 
 var db = admin.database();
 
-const storage = getStorage().bucket('yuzu-5720e.appspot.com');
 
 
 

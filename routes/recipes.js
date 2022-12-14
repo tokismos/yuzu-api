@@ -1,12 +1,12 @@
 require('dotenv').config();
 const express = require("express");
 
-// const https = require('https');
-// const fs = require('fs');
-// const Stream = require('stream').Transform;
-// const path = require('path');
-// const os = require('os');
-// const sharp = require('sharp');
+const https = require('https');
+const fs = require('fs');
+const Stream = require('stream').Transform;
+const path = require('path');
+const os = require('os');
+const sharp = require('sharp');
 const { getAuth } = require('firebase-admin/auth');
 const admin = require("firebase-admin");
 

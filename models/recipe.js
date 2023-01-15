@@ -14,6 +14,21 @@ const statsSchema = new mongoose.Schema(
   },
   { _id: false }
 );
+const ratingsSchema = new mongoose.Schema(
+  {
+    "0,5": { type: Number, required: false },
+    1: { type: Number, required: false },
+    "1,5": { type: Number, required: false },
+    2: { type: Number, required: false },
+    "2,5": { type: Number, required: false },
+    3: { type: Number, required: false },
+    "3,5": { type: Number, required: false },
+    4: { type: Number, required: false },
+    "4,5": { type: Number, required: false },
+    5: { type: Number, required: false },
+  },
+  { _id: false }
+);
 const recipeSchema = new mongoose.Schema({
   imgURL: {
     type: String,
@@ -75,6 +90,7 @@ const recipeSchema = new mongoose.Schema({
   ingredients: [ingredientsSchema],
   stats: statsSchema,
   isVisible: { type: Boolean },
+  ratings: ratingsSchema,
 });
 
 const model = mongoose.model("recipe", recipeSchema);

@@ -1,69 +1,71 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 
-const https = require('https');
-const fs = require('fs');
-const Stream = require('stream').Transform;
-const path = require('path');
-const os = require('os');
-const sharp = require('sharp');
-const { getAuth } = require('firebase-admin/auth');
+const https = require("https");
+const fs = require("fs");
+const Stream = require("stream").Transform;
+const path = require("path");
+const os = require("os");
+const sharp = require("sharp");
+const { getAuth } = require("firebase-admin/auth");
 const admin = require("firebase-admin");
 
 const router = express.Router();
 const recipe = require("../models/recipe");
 
-const serviceAccount = require('../yuzu-5720e-firebase-adminsdk-65ckj-bdc318a85a.json');
+const serviceAccount = require("../yuzu-5720e-firebase-adminsdk-65ckj-bdc318a85a.json");
+const getTotalRatings = require("../helpers/getTotalRatings");
 const firebaseConfig = {
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: process.env.FIREBASE_DATABASE_URL,
+  // databaseURL: process.env.FIREBASE_DATABASE_URL,
+  databaseURL: "https://yuzu-5720e.europe-west1.firebasedatabase.app/",
 };
 
 admin.initializeApp(firebaseConfig);
 
 var db = admin.database();
 
-
-
-
 const isAdmin = async (idToken) => {
-   return await getAuth()
-  .verifyIdToken(idToken)
-  .then((claims) => {
-   return claims.admin === true;
-   
-  })
-  .catch((error) => {
-    console.log(error)
-    return false
-  });
-}
+  return await getAuth()
+    .verifyIdToken(idToken)
+    .then((claims) => {
+      return claims.admin === true;
+    })
+    .catch((error) => {
+      console.log(error);
+      return false;
+    });
+};
 
 router.get("/all", async (req, res) => {
   const result = await recipe.find({});
   res.send(result);
   return result;
-
 });
 
-router.get("/ratings/:idToken", async (req, res) => {
+router.post("/ratings", async (req, res) => {
+  const { _id, rating } = req.body;
+  const ratings = `ratings.${rating?.toString()?.replace(".", ",")}`;
+  try {
+    await recipe.findByIdAndUpdate(
+      { _id },
 
-  if (!(await isAdmin(req.params.idToken))) {
-    res.status(401);
-    return
+      {
+        $inc: { [ratings]: 1 },
+      }
+    );
+    res.status(200);
+  } catch (e) {
+    console.log("Error updating.");
   }
 
-  var ref = db.ref("/rate");
+  // return result;
+});
+router.get("/rating", async (req, res) => {
+  const result = await recipe.findById({ _id: "6301978a446acb828493bef0" });
 
-  const result = await ref.once('value', (data) => {
-    return data
-  });
-
-  res.send(result);
-
-  return result;
-
-
+  const totalRating = getTotalRatings(result?.ratings);
+  res.status(200).send({ totalRating });
 });
 
 router.get("/", async (req, res) => {
@@ -73,6 +75,7 @@ router.get("/", async (req, res) => {
     const keys = Object.keys(req.query);
     console.log("keys", keys);
     keys.forEach((key) => {
+      console.log("ha keeey", req.query);
       filters.push({ [key]: req.query[key] });
     });
     console.log("THIS IS FILTERS", filters);
@@ -80,12 +83,12 @@ router.get("/", async (req, res) => {
 
   console.log("..Filters", ...filters);
   const result = await recipe.find(
+    // { category: "vegetarien" }
     //if there's filters we add them to the query sinon we get all !
     {
       $and: [
         //to get just the recipes that are working
         { isVisible: true },
-
         // if difficulty exist in query , here even if we have multiple value like difficulty = difficile and
         // difficulty= facile  it will look for each one of them
 
@@ -95,20 +98,20 @@ router.get("/", async (req, res) => {
         req.query.category
           ? Array.isArray(req.query.category)
             ? {
-              category: {
-                $in: [...req.query.category],
-              },
-            }
+                category: {
+                  $in: [...req.query.category],
+                },
+              }
             : { category: req.query.category }
           : {},
 
         req.query.regime
           ? Array.isArray(req.query.regime)
             ? {
-              regime: {
-                $in: [...req.query.regime],
-              },
-            }
+                regime: {
+                  $in: [...req.query.regime],
+                },
+              }
             : { regime: req.query.regime }
           : {},
 
@@ -127,12 +130,18 @@ router.get("/", async (req, res) => {
       ],
     }
   );
-  res.send(result);
-  console.log("Number", result.length);
+
+  const resultWithRatings = result.map((item) => {
+    if (item.ratings) {
+      return { ...item.toJSON(), ratings: getTotalRatings(item?.ratings) };
+    }
+    return item;
+  });
+  res.send(resultWithRatings);
   let names = [];
-  result.map((i) => names.push(i.name));
-  console.log("LENGTH", result.length);
-  return result;
+  resultWithRatings.map((i) => names.push(i.name));
+
+  return resultWithRatings;
 });
 
 router.get("/filters", async (req, res) => {
@@ -142,10 +151,9 @@ router.get("/filters", async (req, res) => {
   return result;
 });
 router.patch("/tmp/:idToken", async (req, res) => {
-
   if (!(await isAdmin(req.params.idToken))) {
     res.status(401);
-    return
+    return;
   }
   try {
     await recipe.updateMany(
@@ -161,7 +169,6 @@ router.patch("/tmp/:idToken", async (req, res) => {
       ],
       { upsert: true }
     );
-    console.log("dazha");
   } catch (e) {
     console.log("Qrreye", e);
   }
@@ -169,7 +176,7 @@ router.patch("/tmp/:idToken", async (req, res) => {
   return "DONE";
 });
 
-router.get('/byName/:name', async (req, res) => {
+router.get("/byName/:name", async (req, res) => {
   const { name } = req.params;
 
   if (!name) res.status(400).send({ msg: "Bad format" });
@@ -177,12 +184,12 @@ router.get('/byName/:name', async (req, res) => {
   try {
     const result = await recipe.find({ name });
 
-    if (!Array.isArray(result) || result === 0) throw Error('not found');
+    if (!Array.isArray(result) || result === 0) throw Error("not found");
     res.send(result[0]);
   } catch (e) {
     res.send(e);
   }
-})
+});
 
 router.get("/:id", async (req, res) => {
   const result = await recipe.find({ _id: req.params.id });
@@ -192,10 +199,9 @@ router.get("/:id", async (req, res) => {
 });
 //Modifier la recette
 router.patch("/toggleVisible/:id/:value/:idToken", async (req, res) => {
-
   if (!(await isAdmin(req.params.idToken))) {
     res.status(401);
-    return
+    return;
   }
   try {
     await recipe
@@ -218,13 +224,11 @@ router.patch("/toggleVisible/:id/:value/:idToken", async (req, res) => {
 });
 
 router.patch("/modify/:idToken", async (req, res) => {
-
   if (!(await isAdmin(req.params.idToken))) {
     res.status(401);
-    return
+    return;
   }
   try {
-
     await recipe
       .findByIdAndUpdate(req.body._id, req.body, function (err, docs) {
         if (err) {
@@ -262,10 +266,9 @@ router.patch("/incrementLeft", async (req, res) => {
 });
 //Supprimer la recette
 router.delete("/:id/:idToken", async (req, res) => {
-
   if (!(await isAdmin(req.params.idToken))) {
     res.status(401);
-    return
+    return;
   }
 
   try {
@@ -282,28 +285,36 @@ router.delete("/:id/:idToken", async (req, res) => {
   }
 });
 
-router.post('/thumb/:idToken', async (req, res) => {
-  if (!req.body.thumbURL || !req.body.item._id || !(await isAdmin(req.params.idToken))) {
-
+router.post("/thumb/:idToken", async (req, res) => {
+  if (
+    !req.body.thumbURL ||
+    !req.body.item._id ||
+    !(await isAdmin(req.params.idToken))
+  ) {
     res.status(401);
-    return
+    return;
   }
 
   try {
-    await recipe.findByIdAndUpdate(req.body.item._id, { thumbURL: req.body.thumbURL }, (err, data) => {
-      if (err) res.status(500).send({ err })
-      res.status(200).send({ data });
-    }).clone();
+    await recipe
+      .findByIdAndUpdate(
+        req.body.item._id,
+        { thumbURL: req.body.thumbURL },
+        (err, data) => {
+          if (err) res.status(500).send({ err });
+          res.status(200).send({ data });
+        }
+      )
+      .clone();
   } catch (e) {
     console.error(e);
   }
-})
+});
 
 router.post("/add/:idToken", async (req, res) => {
-
   if (!(await isAdmin(req.params.idToken))) {
-    res.status(401)
-    return
+    res.status(401);
+    return;
   }
 
   const newRecipe = new recipe({

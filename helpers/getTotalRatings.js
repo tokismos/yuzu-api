@@ -14,7 +14,7 @@ const getTotalRatings = (ratingsObj) => {
     { total: 0, totalRate: 0 }
   );
   if (total.total < 4) {
-    return -1;
+    return "NEW";
   }
   return parseFloat((total.totalRate / total.total).toFixed(1));
 };

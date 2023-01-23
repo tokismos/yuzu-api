@@ -83,10 +83,22 @@ const recipeSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  saison: {
+    type: String,
+    required: true,
+  },
   material: {
     type: Array,
     required: true,
   },
+  typesPlat: {
+    type: Array,
+  },
+
+  regime: {
+    type: Array,
+  },
+
   ingredients: [ingredientsSchema],
   stats: statsSchema,
   isVisible: { type: Boolean },

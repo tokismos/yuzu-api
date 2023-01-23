@@ -12,13 +12,12 @@ const admin = require("firebase-admin");
 
 const router = express.Router();
 const recipe = require("../models/recipe");
-
+const TEMPS_TOTAL = 30;
 const serviceAccount = require("../yuzu-5720e-firebase-adminsdk-65ckj-bdc318a85a.json");
 const getTotalRatings = require("../helpers/getTotalRatings");
 const firebaseConfig = {
   credential: admin.credential.cert(serviceAccount),
-  // databaseURL: process.env.FIREBASE_DATABASE_URL,
-  databaseURL: "https://yuzu-5720e.europe-west1.firebasedatabase.app/",
+  databaseURL: process.env.FIREBASE_DATABASE_URL,
 };
 
 admin.initializeApp(firebaseConfig);
@@ -57,12 +56,13 @@ router.post("/ratings", async (req, res) => {
     res.status(200);
   } catch (e) {
     console.log("Error updating.");
+    throw new Error("Error rating !");
   }
 
   // return result;
 });
 router.get("/rating", async (req, res) => {
-  const result = await recipe.findById({ _id: "6301978a446acb828493bef0" });
+  const result = await recipe.findById({ _id: req.params._id });
 
   const totalRating = getTotalRatings(result?.ratings);
   res.status(200).send({ totalRating });
@@ -93,6 +93,7 @@ router.get("/", async (req, res) => {
         // difficulty= facile  it will look for each one of them
 
         req.query.difficulty ? { difficulty: req.query.difficulty } : {},
+        req.query.saison ? { saison: req.query.saison } : {},
 
         //we have isArray because when its just one value its  not working so it should be an array to do in
         req.query.category
@@ -116,9 +117,9 @@ router.get("/", async (req, res) => {
           : {},
 
         // it will be less than or equal the value
-        req.query.tempsTotal
-          ? { tempsTotal: { $lte: req.query.tempsTotal } }
-          : {},
+
+        { tempsTotal: { $lte: req.query.tempsTotal || TEMPS_TOTAL } },
+        req.query.typesPlat ? { typesPlat: { $in: req.query.typesPlat } } : {},
 
         //we have isArray because when its just one value its  not working so it should be an array to do in
 
@@ -145,7 +146,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/filters", async (req, res) => {
-  const result = await recipe.find({ _id: req.params.id });
+  const result = await recipe.find({ _id: req.body.id });
 
   res.send(result);
   return result;
@@ -170,7 +171,7 @@ router.patch("/tmp/:idToken", async (req, res) => {
       { upsert: true }
     );
   } catch (e) {
-    console.log("Qrreye", e);
+    console.log("Erreur", e);
   }
   res.send("DONE");
   return "DONE";
@@ -192,8 +193,15 @@ router.get("/byName/:name", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  const result = await recipe.find({ _id: req.params.id });
-
+  const result = await recipe.findOne({ _id: req.params.id });
+  if (result.ratings) {
+    const resWithRatings = {
+      ...result.toJSON(),
+      ratings: getTotalRatings(result?.ratings),
+    };
+    res.send(resWithRatings);
+    return resWithRatings;
+  }
   res.send(result);
   return result;
 });
@@ -316,7 +324,6 @@ router.post("/add/:idToken", async (req, res) => {
     res.status(401);
     return;
   }
-
   const newRecipe = new recipe({
     imgURL: req.body.imgURL,
     thumbURL: req.body.thumbURL,
@@ -335,6 +342,8 @@ router.post("/add/:idToken", async (req, res) => {
     material: req.body.material,
     isVisible: true,
     tempsTotal: req.body.tempsTotal,
+    saison: req.body.saison,
+    typesPlat: req.body.typesPlat,
   });
   try {
     const result = await newRecipe.save();

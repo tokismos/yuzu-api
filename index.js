@@ -4,7 +4,7 @@ const app = express();
 
 const mongoose = require("mongoose");
 const recipesRouter = require("./routes/recipes");
-const recipesV3Router = require("./routes/recipesV3");
+// const recipesV3Router = require("./routes/recipesV3");
 const verifyRouter = require("./routes/verify");
 const { default: emailRouter } = require("./routes/email");
 const payRouter = require("./routes/pay");
@@ -21,7 +21,7 @@ app.use(express.urlencoded({ limit: "50mb" }));
 app.use(express.json({ limit: "50mb" }));
 app.use("/", defaultRouter);
 app.use("/recipes", recipesRouter);
-app.use("/recipesV3", recipesV3Router);
+// app.use("/recipesV3", recipesV3Router);
 app.use("/phoneNumber", verifyRouter);
 app.use("/email", emailRouter);
 app.use("/pay", payRouter);

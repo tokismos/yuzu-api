@@ -17,7 +17,10 @@ const firebaseConfig = {
   credential: admin.credential.cert(serviceAccount),
 };
 
-admin.initializeApp(firebaseConfig);
+if(!admin.apps.length) {
+  admin.initializeApp(firebaseConfig);
+}
+else admin.app()
 
 var db = admin.firestore();
 
@@ -35,10 +38,10 @@ const isAdmin = async (idToken) => {
 }
 
 router.get("/all", async (req, res) => {
-  const ref = db.collection("/recipes");
+  const ref = db.collection("recipes");
   const result = await ref.get().then((snapshot) => {
     return snapshot.docs.map(doc => {
-      return { id: doc.id, ...doc.data() }
+      return { _id: doc.id, ...doc.data() }
     })
   });
   res.send(result);
@@ -56,7 +59,7 @@ router.get("/ratings/:idToken", async (req, res) => {
   const ref = db.collection("rate");
   const result = await ref.get().then((snapshot) => {
     return snapshot.docs.map(doc => {
-      return { id: doc.id, ...doc.data() }
+      return {...doc.data() }
     })
   });
 
@@ -76,7 +79,7 @@ router.get('/byName/:name', async (req, res) => {
     const ref = db.collection("recipes");
     const result = await ref.where("name", '==', name).get().then((snapshot) => {
       return snapshot.docs.map(doc => {
-        return { id: doc.id, ...doc.data() }
+        return { _id: doc.id, ...doc.data() }
       })
     });
     if (result.length == 0) throw Error('not found');
@@ -91,7 +94,7 @@ router.get("/:id", async (req, res) => {
 
   const ref = db.collection("recipes");
   const result = await ref.doc(req.params.id).get().then((doc) => {
-    return doc.exists ? [{ id: doc.id, ...doc.data() }] : []
+    return doc.exists ? [{ _id: doc.id, ...doc.data() }] : []
   });
 
   res.send(result);
@@ -99,8 +102,7 @@ router.get("/:id", async (req, res) => {
 });
 //Modifier la recette
 router.patch("/toggleVisible/:id/:value/:idToken", async (req, res) => {
-
-  if (!(await isAdmin(req.params.idToken))) {
+if (!(await isAdmin(req.params.idToken))) {
     res.status(401);
     return
   }
@@ -126,9 +128,10 @@ router.patch("/modify/:idToken", async (req, res) => {
   }
   try {
     // set() instead of update() to replace all recipe data by req.body
+    const recipeId = req.body._id
     delete req.body._id
     const ref = db.collection("recipes");
-    await ref.doc(req.params.id).set(
+    await ref.doc(recipeId).set(
       req.body
     )
       .then(() => {
@@ -142,7 +145,7 @@ router.patch("/modify/:idToken", async (req, res) => {
 router.patch("/incrementRight", async (req, res) => {
   try {
     const ref = db.collection("recipes");
-    await ref.doc(req.params.id).update({
+    await ref.doc(req.body._id).update({
       "stats.nbrRight": admin.firestore.FieldValue.increment(1)
     })
       .then(() => {
@@ -156,7 +159,7 @@ router.patch("/incrementRight", async (req, res) => {
 router.patch("/incrementLeft", async (req, res) => {
   try {
     const ref = db.collection("recipes");
-    await ref.doc(req.params.id).update({
+    await ref.doc(req.body._id).update({
       "stats.nbrLeft": admin.firestore.FieldValue.increment(1)
     })
       .then(() => {

@@ -19,7 +19,11 @@ const firebaseConfig = {
   databaseURL: process.env.FIREBASE_DATABASE_URL,
 };
 
-admin.initializeApp(firebaseConfig);
+
+if(!admin.apps.length) {
+  admin.initializeApp(firebaseConfig);
+}
+else admin.app()
 
 var db = admin.database();
 

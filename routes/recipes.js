@@ -13,6 +13,7 @@ const admin = require("firebase-admin");
 const router = express.Router();
 const recipe = require("../models/recipe");
 const TEMPS_TOTAL = 30;
+const MAX_TIME = 60;
 const serviceAccount = require("../yuzu-5720e-firebase-adminsdk-65ckj-bdc318a85a.json");
 const getTotalRatings = require("../helpers/getTotalRatings");
 const firebaseConfig = {
@@ -80,7 +81,6 @@ router.get("/", async (req, res) => {
     });
     console.log("THIS IS FILTERS", filters);
   }
-
   console.log("..Filters", ...filters);
   const result = await recipe.find(
     // { category: "vegetarien" }
@@ -118,7 +118,9 @@ router.get("/", async (req, res) => {
 
         // it will be less than or equal the value
 
-        { tempsTotal: { $lte: req.query.tempsTotal || TEMPS_TOTAL } },
+        req.query.tempsTotal != MAX_TIME
+          ? { tempsTotal: { $lte: req.query.tempsTotal || TEMPS_TOTAL } }
+          : {},
         req.query.typesPlat ? { typesPlat: { $in: req.query.typesPlat } } : {},
 
         //we have isArray because when its just one value its  not working so it should be an array to do in

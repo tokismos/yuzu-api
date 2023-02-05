@@ -96,15 +96,15 @@ router.get("/", async (req, res) => {
         req.query.saison ? { saison: req.query.saison } : {},
 
         //we have isArray because when its just one value its  not working so it should be an array to do in
-        req.query.category
-          ? Array.isArray(req.query.category)
-            ? {
-                category: {
-                  $in: [...req.query.category],
-                },
-              }
-            : { category: req.query.category }
-          : {},
+        // req.query.category
+        //   ? Array.isArray(req.query.category)
+        //     ? {
+        //         category: {
+        //           $in: [...req.query.category],
+        //         },
+        //       }
+        //     : { category: req.query.category }
+        //   : {},
 
         req.query.regime
           ? Array.isArray(req.query.regime)
@@ -339,7 +339,7 @@ router.post("/add/", async (req, res) => {
     tempsCuisson: req.body.tempsCuisson,
     tempsPreparation: req.body.tempsPreparation,
     ingredients: req.body.ingredients,
-    category: req.body.category,
+    // category: req.body.category,
     regime: req.body.regime,
     material: req.body.material,
     isVisible: true,

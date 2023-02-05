@@ -50,10 +50,6 @@ const recipeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  category: {
-    type: Array,
-    required: true,
-  },
   difficulty: {
     type: String,
     required: true,

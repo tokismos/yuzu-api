@@ -24,6 +24,11 @@ else admin.app()
 
 var db = admin.firestore();
 
+// add admin
+// getAuth().setCustomUserClaims('', {admin: true}).then(() => {
+//   console.log('admin')
+// });
+
 const isAdmin = async (idToken) => {
   return await getAuth()
     .verifyIdToken(idToken)
@@ -38,6 +43,7 @@ const isAdmin = async (idToken) => {
 }
 
 router.get("/all", async (req, res) => {
+  
   const ref = db.collection("recipes");
   const result = await ref.get().then((snapshot) => {
     return snapshot.docs.map(doc => {
@@ -71,6 +77,7 @@ router.get("/ratings/:idToken", async (req, res) => {
 });
 
 router.get('/byName/:name', async (req, res) => {
+  
   const { name } = req.params;
 
   if (!name) res.status(400).send({ msg: "Bad format" });
@@ -109,13 +116,15 @@ if (!(await isAdmin(req.params.idToken))) {
   try {
     const ref = db.collection("recipes");
     await ref.doc(req.params.id).update({
-      isVisible: req.params.value
+      isVisible: req.params.value == "false" ? false : true
     })
       .then(() => {
+        console.log("Visible Modified successfuly")
         res.status(200).send({ message: "Visible Modified successfuly" });
       })
 
   } catch (e) {
+    console.log(e, "Error, NOT MODIFIED")
     res.status(400).send({ message: "Error, NOT MODIFIED", error: e });
   }
 });
@@ -224,29 +233,31 @@ router.post("/add/:idToken", async (req, res) => {
   try {
     const ref = db.collection("recipes");
    await ref.add({
-      imgURL: req.body.imgURL,
-      thumbURL: req.body.thumbURL,
-      videoURL: req.body.videoURL,
-      tempsAttente: req.body.tempsAttente,
-      chefName: req.body.chefName,
-      name: req.body.name,
-      difficulty: req.body.difficulty,
-      steps: req.body.steps,
-      nbrPersonne: req.body.nbrPersonne,
-      tempsCuisson: req.body.tempsCuisson,
-      tempsPreparation: req.body.tempsPreparation,
-      ingredients: req.body.ingredients,
-      category: req.body.category,
-      regime: req.body.regime,
-      material: req.body.material,
+      imgURL: req.body.imgURL ? req.body.imgURL : "",
+      thumbURL: req.body.thumbURL ? req.body.thumbURL : "",
+      videoURL: req.body.videoURL ? req.body.videoURL : "",
+      tempsAttente: req.body.tempsAttente ? req.body.tempsAttente : 0,
+      chefName: req.body.chefName ? req.body.chefName : "",
+      name: req.body.name ? req.body.name : "",
+      difficulty: req.body.difficulty ? req.body.difficulty : "",
+      steps: req.body.steps ? req.body.steps : [],
+      nbrPersonne: req.body.nbrPersonne ? req.body.nbrPersonne : 0,
+      tempsCuisson: req.body.tempsCuisson ? req.body.tempsCuisson : 0,
+      tempsPreparation: req.body.tempsPreparation ? req.body.tempsPreparation : 0,
+      ingredients: req.body.ingredients ? req.body.ingredients : [],
+      category: req.body.category ? req.body.category : [],
+      regime: req.body.regime ? req.body.regime : [],
+      material: req.body.material ? req.body.material : [],
       isVisible: true,
-      tempsTotal: req.body.tempsTotal,
+      tempsTotal: req.body.tempsTotal ? req.body.tempsTotal : 0,
     }).then(()=> {
+      console.log("added" ,req.body.name)
       res.status(200).send({ message: "DATA ADDED TO DB" });
 
     })
 
   } catch (err) {
+    console.log(err)
     res.status(400).send({ message: "Error, NOT ADDED TO DB", error: err });
   }
 });

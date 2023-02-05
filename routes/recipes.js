@@ -208,11 +208,11 @@ router.get("/:id", async (req, res) => {
   return result;
 });
 //Modifier la recette
-router.patch("/toggleVisible/:id/:value/:idToken", async (req, res) => {
-  if (!(await isAdmin(req.params.idToken))) {
-    res.status(401);
-    return;
-  }
+router.patch("/toggleVisible/:id/:value/", async (req, res) => {
+  // if (!(await isAdmin(req.params.idToken))) {
+  //   res.status(401);
+  //   return;
+  // }
   try {
     await recipe
       .findByIdAndUpdate(
@@ -233,11 +233,11 @@ router.patch("/toggleVisible/:id/:value/:idToken", async (req, res) => {
   }
 });
 
-router.patch("/modify/:idToken", async (req, res) => {
-  if (!(await isAdmin(req.params.idToken))) {
-    res.status(401);
-    return;
-  }
+router.patch("/modify/", async (req, res) => {
+  // if (!(await isAdmin(req.params.idToken))) {
+  //   res.status(401);
+  //   return;
+  // }
   try {
     await recipe
       .findByIdAndUpdate(req.body._id, req.body, function (err, docs) {
@@ -275,11 +275,11 @@ router.patch("/incrementLeft", async (req, res) => {
   }
 });
 //Supprimer la recette
-router.delete("/:id/:idToken", async (req, res) => {
-  if (!(await isAdmin(req.params.idToken))) {
-    res.status(401);
-    return;
-  }
+router.delete("/:id/", async (req, res) => {
+  // if (!(await isAdmin(req.params.idToken))) {
+  //   res.status(401);
+  //   return;
+  // }
 
   try {
     await recipe.findByIdAndDelete(req.params.id, function (err, docs) {
@@ -321,11 +321,11 @@ router.post("/thumb/:idToken", async (req, res) => {
   }
 });
 
-router.post("/add/:idToken", async (req, res) => {
-  if (!(await isAdmin(req.params.idToken))) {
-    res.status(401);
-    return;
-  }
+router.post("/add/", async (req, res) => {
+  // if (!(await isAdmin(req.params.idToken))) {
+  //   res.status(401);
+  //   return;
+  // }
   const newRecipe = new recipe({
     imgURL: req.body.imgURL,
     thumbURL: req.body.thumbURL,

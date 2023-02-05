@@ -196,7 +196,7 @@ router.get("/byName/:name", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   const result = await recipe.findOne({ _id: req.params.id });
-  if (result.ratings) {
+  if (result?.ratings) {
     const resWithRatings = {
       ...result.toJSON(),
       ratings: getTotalRatings(result?.ratings),
